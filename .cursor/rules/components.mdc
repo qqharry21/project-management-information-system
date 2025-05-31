@@ -1,0 +1,14 @@
+---
+description: 
+globs: src/components/**/*.tsx
+alwaysApply: false
+---
+# Components Guide
+
+- All reusable UI components live in [`src/components/`](mdc:src/components).
+- Atomic UI primitives (e.g., Button, Card, Table, Input, etc.) are in [`src/components/ui/`](mdc:src/components/ui).
+- Compose higher-level components from these primitives for consistency and maintainability.
+- Follow the pattern: keep logic minimal in UI primitives, and extend via composition in feature or page-level components.
+- Use Tailwind CSS utility classes for styling, and prefer Shadcn UI/Radix UI patterns for accessibility and design.
+- Example: To use a button, import from [`src/components/ui/button.tsx`](mdc:src/components/ui/button.tsx).
+- For new UI primitives, add them to the `ui/` subdirectory and document usage inline.

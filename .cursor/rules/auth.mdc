@@ -1,0 +1,13 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Authentication Guide
+
+- Auth is handled via Supabase Auth. See [`src/lib/supabase/`](mdc:src/lib/supabase) for client/server logic.
+- Session management and route protection are enforced in [`src/middleware.ts`](mdc:src/middleware.ts) and [`src/lib/supabase/middleware.ts`](mdc:src/lib/supabase/middleware.ts).
+- Protected routes (e.g., dashboard, private pages) require a valid Supabase session; unauthenticated users are redirected to `/login`.
+- Auth confirmation handled in [`src/app/auth/confirm/route.ts`](mdc:src/app/auth/confirm/route.ts).
+- Login logic in [`src/app/login/`](mdc:src/app/login).
+- Always use Supabase RLS for backend data security.

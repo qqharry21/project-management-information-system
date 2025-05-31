@@ -1,0 +1,15 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Testing Guide
+
+- Use Jest and React Testing Library for all unit and integration tests.
+- Place test files next to the code under test, named `*.test.ts(x)`.
+- Test all components, hooks, and utilities. Mock external dependencies (e.g., Supabase, network).
+- Use `@testing-library/react` for UI, `@testing-library/jest-dom` for assertions.
+- Prefer testing behavior and user interaction over implementation details.
+- Use factories or fixtures for test data. Avoid hardcoding values in multiple tests.
+- Run tests with `npm test` or `yarn test`. Add CI for automated test runs.
+- 100% coverage is not required, but all critical logic and edge cases must be tested.

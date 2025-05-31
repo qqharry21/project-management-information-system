@@ -1,0 +1,17 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Project Structure Guide
+
+This project is a Next.js app using the `/src` directory for all source code. Key structure:
+
+- **App Directory**: All routing and pages are under [`src/app/`](mdc:src/app). Entry point is [`src/app/page.tsx`](mdc:src/app/page.tsx), with global layout in [`src/app/layout.tsx`](mdc:src/app/layout.tsx) and styles in [`src/app/globals.css`](mdc:src/app/globals.css).
+- **Middleware**: Auth/session middleware is in [`src/middleware.ts`](mdc:src/middleware.ts), delegating to Supabase logic in [`src/lib/supabase/middleware.ts`](mdc:src/lib/supabase/middleware.ts).
+- **Supabase Integration**: Supabase client/server logic is in [`src/lib/supabase/`](mdc:src/lib/supabase), with client, server, and middleware modules.
+- **Components**: Reusable UI components are in [`src/components/`](mdc:src/components), with atomic UI primitives in [`src/components/ui/`](mdc:src/components/ui).
+- **Feature Folders**: Each feature/page (e.g., dashboard, login, auth) has its own folder under [`src/app/`](mdc:src/app).
+- **Hooks/Utils**: Custom hooks in [`src/hooks/`](mdc:src/hooks) and utilities in [`src/utils.ts`](mdc:src/utils.ts).
+
+Follow Next.js app directory conventions. Use Tailwind CSS and Shadcn UI for styling. Supabase is the backend for auth, data, and storage.

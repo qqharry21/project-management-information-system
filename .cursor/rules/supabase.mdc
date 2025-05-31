@@ -1,0 +1,15 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Supabase Guide
+
+- Use Supabase for auth, database, and storage. All logic is in [`src/lib/supabase/`](mdc:src/lib/supabase).
+- **SSR**: Use [`server.ts`](mdc:src/lib/supabase/server.ts) for server-side Supabase (with Next.js cookies).
+- **CSR**: Use [`client.ts`](mdc:src/lib/supabase/client.ts) for browser-side Supabase.
+- **Middleware**: Session and auth logic in [`middleware.ts`](mdc:src/lib/supabase/middleware.ts) and [`src/middleware.ts`](mdc:src/middleware.ts).
+- Enforce Row Level Security (RLS) on all tables. Never trust client-side auth alone.
+- Use Supabase Storage for file uploads if needed.
+- Use Genql for type-safe GraphQL queries (if present). Optimize queries to fetch only required fields.
+- Always validate user/session on the server before returning sensitive data.

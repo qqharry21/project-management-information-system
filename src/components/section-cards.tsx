@@ -1,8 +1,12 @@
 'use client';
 
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+import {
+  IconChartLine,
+  IconCurrencyDollar,
+  IconTrendingDown,
+  IconTrendingUp,
+} from '@tabler/icons-react';
 
-import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardAction,
@@ -22,15 +26,12 @@ export function SectionCards() {
             $1,250.00
           </CardTitle>
           <CardAction>
-            <Badge variant='outline'>
-              <IconTrendingUp />
-              +12.5%
-            </Badge>
+            <IconCurrencyDollar className='size-4' />
           </CardAction>
         </CardHeader>
         <CardFooter className='flex-col items-start gap-1.5 text-sm'>
           <div className='line-clamp-1 flex gap-2 font-medium'>
-            本月趨勢上升 <IconTrendingUp className='size-4' />
+            本月趨勢上升 12.5% <IconTrendingUp className='size-4' />
           </div>
         </CardFooter>
       </Card>
@@ -41,15 +42,12 @@ export function SectionCards() {
             $1,234
           </CardTitle>
           <CardAction>
-            <Badge variant='outline'>
-              <IconTrendingDown />
-              -20%
-            </Badge>
+            <IconTrendingDown className='size-4' />
           </CardAction>
         </CardHeader>
         <CardFooter className='flex-col items-start gap-1.5 text-sm'>
           <div className='line-clamp-1 flex gap-2 font-medium'>
-            本月下降 20% <IconTrendingDown className='size-4' />
+            較上月下降 20% <IconTrendingDown className='size-4' />
           </div>
         </CardFooter>
       </Card>
@@ -60,10 +58,7 @@ export function SectionCards() {
             $45,678
           </CardTitle>
           <CardAction>
-            <Badge variant='outline'>
-              <IconTrendingUp />
-              +12.5%
-            </Badge>
+            <IconTrendingUp className='size-4' />
           </CardAction>
         </CardHeader>
         <CardFooter className='flex-col items-start gap-1.5 text-sm'>
@@ -74,15 +69,12 @@ export function SectionCards() {
       </Card>
       <Card className='@container/card'>
         <CardHeader>
-          <CardDescription>訂閱支出</CardDescription>
+          <CardDescription>專案完成率</CardDescription>
           <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-            $3600
+            83.5%
           </CardTitle>
           <CardAction>
-            <Badge variant='outline'>
-              <IconTrendingUp />
-              +4.5%
-            </Badge>
+            <IconChartLine className='size-4' />
           </CardAction>
         </CardHeader>
         <CardFooter className='flex-col items-start gap-1.5 text-sm'>

@@ -63,6 +63,7 @@ alwaysApply: false
   - refactor: Code refactoring
   - test: Adding tests
   - chore: Maintenance tasks
+- Don't leave uncessary spacing at the commit message.
 
 ## Version Control
 

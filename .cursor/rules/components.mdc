@@ -1,5 +1,5 @@
 ---
-description: 
+description:
 globs: src/components/**/*.tsx
 alwaysApply: false
 ---
@@ -10,5 +10,6 @@ alwaysApply: false
 - Compose higher-level components from these primitives for consistency and maintainability.
 - Follow the pattern: keep logic minimal in UI primitives, and extend via composition in feature or page-level components.
 - Use Tailwind CSS utility classes for styling, and prefer Shadcn UI/Radix UI patterns for accessibility and design.
+- Use @`src/lib/utils` to join the classname.
 - Example: To use a button, import from [`src/components/ui/button.tsx`](mdc:src/components/ui/button.tsx).
 - For new UI primitives, add them to the `ui/` subdirectory and document usage inline.

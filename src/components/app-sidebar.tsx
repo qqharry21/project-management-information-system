@@ -161,7 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className='data-[slot=sidebar-menu-button]:!p-1.5'>
+              className='data-[slot=sidebar-menu-button]:!p-1.5 select-none inline-flex w-fit'>
               <Link href='/'>
                 <IconInnerShadowTop className='!size-5' />
                 <span className='text-base font-semibold'>{process.env.NEXT_PUBLIC_APP_NAME}</span>

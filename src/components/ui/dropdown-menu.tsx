@@ -27,10 +27,12 @@ function DropdownMenuPortal({
 }
 
 function DropdownMenuTrigger({
+  className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
   return (
     <DropdownMenuPrimitive.Trigger
+      className={cn('select-none', className)}
       data-slot='dropdown-menu-trigger'
       {...props}
     />
@@ -182,7 +184,7 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<'spa
   return (
     <span
       data-slot='dropdown-menu-shortcut'
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
+      className={cn('text-muted-foreground ml-auto text-xs tracking-wide select-none', className)}
       {...props}
     />
   );

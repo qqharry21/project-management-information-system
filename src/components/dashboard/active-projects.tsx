@@ -44,6 +44,33 @@ const mockProjects = [
   },
 ];
 
+const ProjectCard = ({ project }: { project: (typeof mockProjects)[number] }) => {
+  return (
+    <div
+      key={project.id}
+      className='flex flex-col gap-1 rounded-lg border p-3'>
+      <div className='flex items-center justify-between'>
+        <Link
+          href={`/projects/${project.id}`}
+          className='font-medium'>
+          {project.name}
+        </Link>
+        {project.isOverdue && <Badge variant='destructive'>逾期</Badge>}
+      </div>
+      <div className='flex items-center gap-2 mt-2 text-xs text-muted-foreground'>
+        <span>截止日：{project.dueDate}</span>
+        <span className='ml-auto'>{project.percentComplete}%</span>
+      </div>
+      <div className='w-full h-2 rounded bg-secondary mt-1 overflow-hidden'>
+        <div
+          className='h-2 rounded transition-all bg-primary'
+          style={{ width: `${project.percentComplete}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
 export const ActiveProjects = () => {
   return (
     <Card className='col-span-full'>
@@ -54,7 +81,7 @@ export const ActiveProjects = () => {
           <Button
             variant='outline'
             asChild>
-            <Link href='/subscriptions'>
+            <Link href='/projects'>
               查看更多
               <IconArrowUpRight className='w-4 h-4' />
             </Link>
@@ -63,24 +90,10 @@ export const ActiveProjects = () => {
       </CardHeader>
       <CardContent className='flex flex-col gap-4'>
         {mockProjects.map((project) => (
-          <div
+          <ProjectCard
             key={project.id}
-            className='flex flex-col gap-1 rounded-lg border p-3'>
-            <div className='flex items-center justify-between'>
-              <span className='font-medium'>{project.name}</span>
-              {project.isOverdue && <Badge variant='secondary'>逾期</Badge>}
-            </div>
-            <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-              <span>截止日：{project.dueDate}</span>
-              <span className='ml-auto'>{project.percentComplete}%</span>
-            </div>
-            <div className='w-full h-2 rounded bg-secondary mt-1 overflow-hidden'>
-              <div
-                className='h-2 rounded transition-all bg-primary'
-                style={{ width: `${project.percentComplete}%` }}
-              />
-            </div>
-          </div>
+            project={project}
+          />
         ))}
       </CardContent>
     </Card>

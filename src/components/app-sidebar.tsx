@@ -43,7 +43,7 @@ const data = {
   navMain: [
     {
       title: '儀表板',
-      url: '/dashboard',
+      url: '/',
       icon: IconDashboard,
     },
     {

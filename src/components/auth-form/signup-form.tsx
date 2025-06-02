@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
-import { IconLoader } from '@tabler/icons-react';
+import { IconLoader, IconLock, IconLockUp, IconMail, IconUser } from '@tabler/icons-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -135,13 +135,17 @@ export default function SignUpForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>名稱</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='text'
-                        placeholder='張三'
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className='relative'>
+                      <IconUser className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <FormControl>
+                        <Input
+                          type='text'
+                          placeholder='張三'
+                          className='pl-9'
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -152,13 +156,17 @@ export default function SignUpForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>電子郵件</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='email'
-                        placeholder='m@example.com'
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className='relative'>
+                      <IconMail className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <FormControl>
+                        <Input
+                          type='email'
+                          placeholder='m@example.com'
+                          className='pl-9'
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -169,12 +177,16 @@ export default function SignUpForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>密碼</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='password'
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className='relative'>
+                      <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <FormControl>
+                        <Input
+                          type='password'
+                          className='pl-9'
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -186,12 +198,16 @@ export default function SignUpForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>確認密碼</FormLabel>
-                      <FormControl>
-                        <Input
-                          type='password'
-                          {...field}
-                        />
-                      </FormControl>
+                      <div className='relative'>
+                        <IconLockUp className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                        <FormControl>
+                          <Input
+                            type='password'
+                            {...field}
+                            className='pl-9'
+                          />
+                        </FormControl>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

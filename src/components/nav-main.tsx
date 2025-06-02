@@ -50,7 +50,7 @@ export function NavMain({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 tooltip={item.title}
-                isActive={pathname.includes(item.url)}
+                isActive={pathname === item.url || pathname.startsWith(`${item.url}/`)}
                 asChild>
                 <Link href={item.url}>
                   {item.icon && <item.icon />}

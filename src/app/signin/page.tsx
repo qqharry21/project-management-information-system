@@ -7,9 +7,9 @@ export const metadata: Metadata = {
   keywords: ['登入', '電子郵件', '帳號'],
 };
 
-export default function Page() {
+export default async function Page() {
   // const preferredSignInView = cookies().get('preferredSignInView')?.value;
   // const defaultView = getDefaultSignInView(preferredSignInView);
 
-  return redirect(`/signin/email_signin`);
+  return redirect('/signin/email_signin');
 }

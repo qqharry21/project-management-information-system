@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 
 type PageProps = {
   params: Promise<{ type: string }>;
+  searchParams: Promise<{ verified: string; otp_sent: string }>;
 };
 
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
@@ -63,6 +64,8 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 export default async function SignInPage(props: PageProps) {
   const params = await props.params;
   const viewProp = params.type;
+  const searchParams = await props.searchParams;
+  const { verified, otp_sent } = searchParams;
 
   const supabase = await createClient();
 
@@ -85,11 +88,17 @@ export default async function SignInPage(props: PageProps) {
       case 'reset_password':
         return <ResetPasswordForm />;
       case 'email_signin':
-        return <SignInForm />;
+        return (
+          <SignInForm
+            otpSent={otp_sent === 'true'}
+            verified={verified === 'true'}
+          />
+        );
       default:
         return null;
     }
   };
+
   return (
     <div className='bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10'>
       <div className='flex w-full max-w-sm flex-col gap-6'>

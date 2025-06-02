@@ -24,11 +24,26 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export function NavUser({ user }: { user: User }) {
-  console.log('🚨 - user', user);
   const { isMobile } = useSidebar();
+  const supabase = createClient();
+  const router = useRouter();
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success('登出成功');
+      router.push('/signin');
+    } catch (error) {
+      console.error(error);
+      toast.error('登出失敗');
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -88,7 +103,7 @@ export function NavUser({ user }: { user: User }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={signOut}>
               <IconLogout />
               登出
             </DropdownMenuItem>

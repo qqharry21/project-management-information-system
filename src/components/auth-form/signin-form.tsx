@@ -1,9 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconLoader } from '@tabler/icons-react';
+import { IconLoader, IconLock, IconMail } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -13,14 +13,60 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { checkEmailExists } from '@/lib/auth-helpers/client';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
+
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+const ResendOtpButton = ({ email }: { email: string }) => {
+  const [resendTime, setResendTime] = useState(0);
+
+  useEffect(() => {
+    if (resendTime > 0) {
+      setTimeout(() => setResendTime(resendTime - 1), 1000);
+    }
+  }, [resendTime]);
+
+  async function handleResendOtp() {
+    if (resendTime > 0) return;
+
+    setResendTime(60);
+    const supabase = createClient();
+    await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: 'http://localhost:3000/signin/email_signin?verified=true',
+      },
+    });
+  }
+
+  return (
+    <div className='flex flex-col gap-2'>
+      <div className='text-sm font-medium'>還沒收到驗證信嗎？</div>
+      <Button
+        type='button'
+        variant='outline'
+        className='w-full disabled:cursor-not-allowed'
+        disabled={resendTime > 0}
+        onClick={handleResendOtp}>
+        {resendTime > 0 ? `可於 ${formatTime(resendTime)} 後重新發送驗證信` : '重新發送驗證信'}
+      </Button>
+    </div>
+  );
+};
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,7 +77,13 @@ const formSchema = z.object({
   }),
 });
 
-export default function SignInForm() {
+export default function SignInForm({
+  otpSent,
+  verified,
+}: {
+  otpSent?: boolean;
+  verified?: boolean;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
   const router = useRouter();
@@ -56,7 +108,17 @@ export default function SignInForm() {
 
       if (error) {
         console.error(error);
-        toast.error(error.message);
+        if (error.code === 'invalid_credentials') {
+          const emailExists = await checkEmailExists(values.email);
+          if (emailExists) {
+            toast.error('密碼錯誤');
+          } else {
+            toast.error('帳號不存在');
+          }
+        } else if (error.code === 'email_not_confirmed') {
+          toast.error('帳號未驗證，請先驗證帳號');
+        } else toast.error(error.message);
+
         return;
       }
 
@@ -69,6 +131,13 @@ export default function SignInForm() {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (verified) {
+      toast.success('帳號驗證成功，請登入');
+      router.replace('/signin/email_signin');
+    }
+  }, [verified]);
 
   return (
     <div className='flex flex-col gap-6'>
@@ -88,15 +157,20 @@ export default function SignInForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        id='email'
-                        type='email'
-                        placeholder='m@example.com'
-                        required
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className='relative'>
+                      <IconMail className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <FormControl>
+                        <Input
+                          id='email'
+                          type='email'
+                          placeholder='m@example.com'
+                          className='pl-9'
+                          required
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -115,20 +189,26 @@ export default function SignInForm() {
                       </Link>
                     </div>
 
-                    <FormControl>
-                      <Input
-                        id='password'
-                        type='password'
-                        placeholder='********'
-                        required
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className='relative'>
+                      <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <FormControl>
+                        <Input
+                          id='password'
+                          type='password'
+                          placeholder='輸入密碼'
+                          required
+                          className='pl-9'
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormDescription className='text-xs text-muted-foreground'>
+                      密碼至少8位數，包含大小寫字母、數字和特殊字元
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <Button
                 type='submit'
                 className='w-full'>
@@ -142,14 +222,22 @@ export default function SignInForm() {
                 )}
               </Button>
 
-              <div className='text-center text-sm'>
-                還沒有帳號嗎？{' '}
-                <Link
-                  href='/signin/signup'
-                  className='underline underline-offset-4'>
-                  註冊
-                </Link>
+              <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
+                <span className='bg-background text-muted-foreground relative z-10 px-2'>或</span>
               </div>
+
+              {otpSent ? (
+                <ResendOtpButton email={form.getValues('email')} />
+              ) : (
+                <div className='text-center text-sm'>
+                  還沒有帳號嗎？{' '}
+                  <Link
+                    href='/signin/signup'
+                    className='underline underline-offset-4'>
+                    註冊
+                  </Link>
+                </div>
+              )}
             </form>
           </Form>
         </CardContent>

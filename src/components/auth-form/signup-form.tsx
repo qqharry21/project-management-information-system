@@ -85,9 +85,22 @@ export default function SignUpForm() {
       });
       console.log('🚨 - data', data);
 
-      if (error) {
-        console.log('🚨 - error', error.message);
-        toast.error(error.message);
+      let authError = null;
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        authError = {
+          name: 'AuthApiError',
+          message: '帳號已存在',
+        };
+      } else if (error)
+        authError = {
+          name: error.name,
+          message: error.message,
+        };
+
+      if (authError) {
+        console.log('🚨 - error', authError.message);
+
+        toast.error(authError.message);
         return;
       }
 
@@ -95,7 +108,7 @@ export default function SignUpForm() {
         description: '請檢查您的電子郵件以驗證您的帳號。',
       });
 
-      router.push('/');
+      router.push('/signin/email_signin?otp_sent=true');
     } catch (error) {
       console.error(error);
       toast.error('發生錯誤，請再試一次。');

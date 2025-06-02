@@ -40,3 +40,45 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
     },
   });
 }
+
+export async function checkEmailExists(email: string): Promise<boolean> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc('check_user_email_exists', {
+    target_email: email,
+  });
+
+  if (error) {
+    console.error('RPC error:', error);
+    return false;
+  }
+
+  return data === true;
+}
+
+/**
+ * Possible user verification statuses returned by getUserVerificationStatus.
+ */
+export const USER_VERIFICATION_STATUS = {
+  NOT_FOUND: 'not_found',
+  UNVERIFIED: 'unverified',
+  VERIFIED: 'verified',
+} as const;
+
+/**
+ * Checks the verification status of a user by email using a Supabase RPC call.
+ * @param email - The user's email address to check.
+ * @returns The user's verification status: 'not_found', 'unverified', or 'verified'.
+ */
+export async function getUserVerificationStatus(email: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc('get_user_verification_status', {
+    target_email: email,
+  });
+
+  if (error) {
+    console.error('Failed to fetch user verification status:', error.message);
+    return USER_VERIFICATION_STATUS.NOT_FOUND;
+  }
+
+  return data as (typeof USER_VERIFICATION_STATUS)[keyof typeof USER_VERIFICATION_STATUS];
+}

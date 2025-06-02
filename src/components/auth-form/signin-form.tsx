@@ -30,7 +30,7 @@ const formatTime = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-const ResendOtpButton = ({ email }: { email: string }) => {
+const ResendOtpButton = ({ otpSent, email }: { otpSent?: boolean; email: string }) => {
   const [resendTime, setResendTime] = useState(0);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const ResendOtpButton = ({ email }: { email: string }) => {
 
   return (
     <div className='flex flex-col gap-2'>
-      <div className='text-sm font-medium'>還沒收到驗證信嗎？</div>
+      {otpSent && <div className='text-sm font-medium'>還沒收到驗證信嗎？</div>}
       <Button
         type='button'
         variant='outline'
@@ -97,14 +97,12 @@ export default function SignInForm({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('🚨 - values', values);
     setIsLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
-      console.log('🚨 - data', data);
 
       if (error) {
         console.error(error);
@@ -122,7 +120,7 @@ export default function SignInForm({
         return;
       }
 
-      toast.success('登入成功');
+      toast.success(`登入成功，歡迎 ${data.user.user_metadata.name}`);
       router.push('/');
     } catch (error) {
       console.error(error);
@@ -140,111 +138,109 @@ export default function SignInForm({
   }, [verified]);
 
   return (
-    <div className='flex flex-col gap-6'>
-      <Card>
-        <CardHeader>
-          <CardTitle className='text-xl'>登入</CardTitle>
-          <CardDescription>輸入您的電子郵件以登入</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className='space-y-6'>
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <div className='relative'>
-                      <IconMail className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                      <FormControl>
-                        <Input
-                          id='email'
-                          type='email'
-                          placeholder='m@example.com'
-                          className='pl-9'
-                          required
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className='text-xl'>登入</CardTitle>
+        <CardDescription>輸入您的電子郵件以登入</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='space-y-6'>
+            <FormField
+              control={form.control}
+              name='email'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <div className='relative'>
+                    <IconMail className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                    <FormControl>
+                      <Input
+                        id='email'
+                        type='email'
+                        placeholder='m@example.com'
+                        className='pl-9'
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='password'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='flex items-center'>
-                      <FormLabel>密碼</FormLabel>
-                      <Link
-                        href='/signin/forgot_password'
-                        className='ml-auto inline-block text-sm underline-offset-4 hover:underline'>
-                        忘記密碼？
-                      </Link>
-                    </div>
-
-                    <div className='relative'>
-                      <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                      <FormControl>
-                        <Input
-                          id='password'
-                          type='password'
-                          placeholder='輸入密碼'
-                          required
-                          className='pl-9'
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
-                    <FormDescription className='text-xs text-muted-foreground'>
-                      密碼至少8位數，包含大小寫字母、數字和特殊字元
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type='submit'
-                className='w-full'>
-                {isLoading ? (
-                  <>
-                    <IconLoader className='mr-2 h-4 w-4 animate-spin' />
-                    登入中...
-                  </>
-                ) : (
-                  '登入'
-                )}
-              </Button>
-
-              <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
-                <span className='bg-background text-muted-foreground relative z-10 px-2'>或</span>
-              </div>
-
-              {otpSent ? (
-                <ResendOtpButton email={form.getValues('email')} />
-              ) : (
-                <div className='text-center text-sm'>
-                  還沒有帳號嗎？{' '}
-                  <Link
-                    href='/signin/signup'
-                    className='underline underline-offset-4'>
-                    註冊
-                  </Link>
-                </div>
+                  <FormMessage />
+                </FormItem>
               )}
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-      <div className='text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4'>
-        點擊繼續，即表示您同意我們的 <a href='#'>服務條款</a> 和 <a href='#'>隱私政策</a>。
-      </div>
-    </div>
+            />
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <div className='flex items-center'>
+                    <FormLabel>密碼</FormLabel>
+                    <Link
+                      href='/signin/forgot_password'
+                      className='ml-auto inline-block text-sm underline-offset-4 hover:underline'>
+                      忘記密碼？
+                    </Link>
+                  </div>
+
+                  <div className='relative'>
+                    <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                    <FormControl>
+                      <Input
+                        id='password'
+                        type='password'
+                        placeholder='輸入密碼'
+                        required
+                        className='pl-9'
+                        {...field}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormDescription className='text-xs text-muted-foreground'>
+                    密碼至少8位數，包含大小寫字母、數字和特殊字元
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type='submit'
+              className='w-full'>
+              {isLoading ? (
+                <>
+                  <IconLoader className='mr-2 h-4 w-4 animate-spin' />
+                  登入中...
+                </>
+              ) : (
+                '登入'
+              )}
+            </Button>
+
+            <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
+              <span className='bg-background text-muted-foreground relative z-10 px-2'>或</span>
+            </div>
+
+            {otpSent ? (
+              <ResendOtpButton
+                otpSent={otpSent}
+                email={form.getValues('email')}
+              />
+            ) : (
+              <div className='text-center text-sm'>
+                還沒有帳號嗎？{' '}
+                <Link
+                  href='/signin/signup'
+                  className='underline underline-offset-4'>
+                  註冊
+                </Link>
+              </div>
+            )}
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

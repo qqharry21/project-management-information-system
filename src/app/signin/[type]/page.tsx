@@ -1,4 +1,5 @@
 import ForgotPasswordForm from '@/components/auth-form/forgot-password-form';
+import ResendEmailForm from '@/components/auth-form/resend-email-form';
 import ResetPasswordForm from '@/components/auth-form/reset-password-form';
 import SignInForm from '@/components/auth-form/signin-form';
 import SignUpForm from '@/components/auth-form/signup-form';
@@ -8,7 +9,13 @@ import { redirect } from 'next/navigation';
 
 type PageProps = {
   params: Promise<{ type: string }>;
-  searchParams: Promise<{ verified: string; otp_sent: string }>;
+  searchParams: Promise<{
+    verified: string;
+    otp_sent: string;
+    error: string;
+    error_code: string;
+    error_description: string;
+  }>;
 };
 
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
@@ -65,7 +72,7 @@ export default async function SignInPage(props: PageProps) {
   const params = await props.params;
   const viewProp = params.type;
   const searchParams = await props.searchParams;
-  const { verified, otp_sent } = searchParams;
+  const { verified, otp_sent, error, error_code, error_description } = searchParams;
 
   const supabase = await createClient();
 
@@ -77,6 +84,10 @@ export default async function SignInPage(props: PageProps) {
     return redirect('/');
   } else if (!user && viewProp === 'reset_password') {
     return redirect('/signin');
+  } else if (error && error_code === 'otp_expired') {
+    return redirect(
+      `/signin/resend_email?error_description=${encodeURIComponent('驗證失效，請重新發送驗證信')}`
+    );
   }
 
   const renderForm = () => {
@@ -94,17 +105,12 @@ export default async function SignInPage(props: PageProps) {
             verified={verified === 'true'}
           />
         );
+      case 'resend_email':
+        return <ResendEmailForm errorDescription={error_description} />;
       default:
         return null;
     }
   };
 
-  return (
-    <div className='bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10'>
-      <div className='flex w-full max-w-sm flex-col gap-6'>
-        <span className='flex items-center gap-2 self-center font-medium'>HaoMo Tech</span>
-        {renderForm()}
-      </div>
-    </div>
-  );
+  return <>{renderForm()}</>;
 }

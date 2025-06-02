@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
-import { IconLoader } from '@tabler/icons-react';
+import { IconLoader, IconLock } from '@tabler/icons-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -88,78 +88,81 @@ export default function ResetPasswordForm() {
   }
 
   return (
-    <div className='flex flex-col gap-6'>
-      <Card>
-        <CardHeader>
-          <CardTitle className='text-xl'>重設密碼</CardTitle>
-          <CardDescription>請輸入您的新密碼</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className='space-y-6'>
-              <FormField
-                control={form.control}
-                name='password'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>新密碼</FormLabel>
+    <Card>
+      <CardHeader>
+        <CardTitle className='text-xl'>重設密碼</CardTitle>
+        <CardDescription>請輸入您的新密碼</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='space-y-6'>
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>新密碼</FormLabel>
+                  <div className='relative'>
+                    <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
                     <FormControl>
                       <Input
                         type='password'
+                        className='pl-9'
                         {...field}
                       />
                     </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {password && (
+              <FormField
+                control={form.control}
+                name='confirmPassword'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>確認新密碼</FormLabel>
+                    <div className='relative'>
+                      <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                      <FormControl>
+                        <Input
+                          type='password'
+                          className='pl-9'
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {password && (
-                <FormField
-                  control={form.control}
-                  name='confirmPassword'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>確認新密碼</FormLabel>
-                      <FormControl>
-                        <Input
-                          type='password'
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            )}
+            <Button
+              type='submit'
+              className='w-full'
+              disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <IconLoader className='mr-2 h-4 w-4 animate-spin' />
+                  重設密碼中...
+                </>
+              ) : (
+                '重設密碼'
               )}
-              <Button
-                type='submit'
-                className='w-full'
-                disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <IconLoader className='mr-2 h-4 w-4 animate-spin' />
-                    重設密碼中...
-                  </>
-                ) : (
-                  '重設密碼'
-                )}
-              </Button>
-              <div className='text-center text-sm'>
-                <Link
-                  href='/signin/email_signin'
-                  className='underline underline-offset-4'>
-                  返回登入
-                </Link>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-      <div className='text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4'>
-        點擊繼續，即表示您同意我們的 <a href='#'>服務條款</a> 和 <a href='#'>隱私政策</a>。
-      </div>
-    </div>
+            </Button>
+            <div className='text-center text-sm'>
+              <Link
+                href='/signin/email_signin'
+                className='underline underline-offset-4'>
+                返回登入
+              </Link>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

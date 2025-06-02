@@ -1,11 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconLoader } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -20,51 +18,49 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
+import { IconLoader } from '@tabler/icons-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   email: z.string().email({
     message: '請輸入有效的電子郵件地址。',
   }),
-  password: z.string().min(8, {
-    message: '密碼必須至少8個字元，包含大小寫字母、數字和特殊字元。',
-  }),
 });
 
-export default function SignInForm() {
+export default function ForgotPasswordForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('🚨 - values', values);
     setIsLoading(true);
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
+      const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
-      console.log('🚨 - data', data);
 
       if (error) {
-        console.error(error);
         toast.error(error.message);
         return;
       }
 
-      toast.success('登入成功');
-      router.push('/');
+      toast.success('重設密碼信件已發送', {
+        description: '請檢查您的電子郵件以重設密碼。',
+      });
+
+      router.push('/signin/email_signin');
     } catch (error) {
       console.error(error);
-      toast.error('登入失敗，請再試一次');
+      toast.error('發生錯誤，請再試一次。');
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +70,8 @@ export default function SignInForm() {
     <div className='flex flex-col gap-6'>
       <Card>
         <CardHeader>
-          <CardTitle className='text-xl'>登入</CardTitle>
-          <CardDescription>輸入您的電子郵件以登入</CardDescription>
+          <CardTitle className='text-xl'>忘記密碼</CardTitle>
+          <CardDescription>輸入您的電子郵件以重設密碼</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -87,13 +83,11 @@ export default function SignInForm() {
                 name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>電子郵件</FormLabel>
                     <FormControl>
                       <Input
-                        id='email'
                         type='email'
                         placeholder='m@example.com'
-                        required
                         {...field}
                       />
                     </FormControl>
@@ -101,53 +95,25 @@ export default function SignInForm() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name='password'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='flex items-center'>
-                      <FormLabel>密碼</FormLabel>
-                      <Link
-                        href='/signin/forgot_password'
-                        className='ml-auto inline-block text-sm underline-offset-4 hover:underline'>
-                        忘記密碼？
-                      </Link>
-                    </div>
-
-                    <FormControl>
-                      <Input
-                        id='password'
-                        type='password'
-                        placeholder='********'
-                        required
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <Button
                 type='submit'
-                className='w-full'>
+                className='w-full'
+                disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <IconLoader className='mr-2 h-4 w-4 animate-spin' />
-                    登入中...
+                    發送中...
                   </>
                 ) : (
-                  '登入'
+                  '發送重設密碼信件'
                 )}
               </Button>
-
               <div className='text-center text-sm'>
-                還沒有帳號嗎？{' '}
+                記起密碼了？{' '}
                 <Link
-                  href='/signin/signup'
+                  href='/signin/email_signin'
                   className='underline underline-offset-4'>
-                  註冊
+                  登入
                 </Link>
               </div>
             </form>

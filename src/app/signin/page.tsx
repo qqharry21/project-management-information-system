@@ -11,5 +11,5 @@ export default function Page() {
   // const preferredSignInView = cookies().get('preferredSignInView')?.value;
   // const defaultView = getDefaultSignInView(preferredSignInView);
 
-  return redirect(`/signin/email`);
+  return redirect(`/signin/email_signin`);
 }

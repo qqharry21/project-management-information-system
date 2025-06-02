@@ -1,11 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconLoader } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -20,51 +18,70 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
+import { IconLoader } from '@tabler/icons-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: '請輸入有效的電子郵件地址。',
-  }),
-  password: z.string().min(8, {
-    message: '密碼必須至少8個字元，包含大小寫字母、數字和特殊字元。',
-  }),
-});
+const formSchema = z
+  .object({
+    password: z.string().refine(
+      (password) => {
+        if (password.length < 8) {
+          return false;
+        }
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*]/.test(password);
+        return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+      },
+      {
+        message: '密碼必須至少8個字元，包含大小寫字母、數字和特殊字元。',
+      }
+    ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: '密碼不匹配',
+    path: ['confirmPassword'],
+  });
 
-export default function SignInForm() {
+export default function ResetPasswordForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createClient();
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
+  const password = form.watch('password');
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('🚨 - values', values);
     setIsLoading(true);
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: values.email,
+      const { error } = await supabase.auth.updateUser({
         password: values.password,
       });
-      console.log('🚨 - data', data);
 
       if (error) {
-        console.error(error);
         toast.error(error.message);
         return;
       }
 
-      toast.success('登入成功');
-      router.push('/');
+      toast.success('密碼重設成功', {
+        description: '您現在可以使用新密碼登入。',
+      });
+
+      router.push('/signin/email_signin');
     } catch (error) {
       console.error(error);
-      toast.error('登入失敗，請再試一次');
+      toast.error('發生錯誤，請再試一次。');
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +91,8 @@ export default function SignInForm() {
     <div className='flex flex-col gap-6'>
       <Card>
         <CardHeader>
-          <CardTitle className='text-xl'>登入</CardTitle>
-          <CardDescription>輸入您的電子郵件以登入</CardDescription>
+          <CardTitle className='text-xl'>重設密碼</CardTitle>
+          <CardDescription>請輸入您的新密碼</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -84,43 +101,13 @@ export default function SignInForm() {
               className='space-y-6'>
               <FormField
                 control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        id='email'
-                        type='email'
-                        placeholder='m@example.com'
-                        required
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <div className='flex items-center'>
-                      <FormLabel>密碼</FormLabel>
-                      <Link
-                        href='/signin/forgot_password'
-                        className='ml-auto inline-block text-sm underline-offset-4 hover:underline'>
-                        忘記密碼？
-                      </Link>
-                    </div>
-
+                    <FormLabel>新密碼</FormLabel>
                     <FormControl>
                       <Input
-                        id='password'
                         type='password'
-                        placeholder='********'
-                        required
                         {...field}
                       />
                     </FormControl>
@@ -128,26 +115,42 @@ export default function SignInForm() {
                   </FormItem>
                 )}
               />
-
+              {password && (
+                <FormField
+                  control={form.control}
+                  name='confirmPassword'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>確認新密碼</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='password'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <Button
                 type='submit'
-                className='w-full'>
+                className='w-full'
+                disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <IconLoader className='mr-2 h-4 w-4 animate-spin' />
-                    登入中...
+                    重設密碼中...
                   </>
                 ) : (
-                  '登入'
+                  '重設密碼'
                 )}
               </Button>
-
               <div className='text-center text-sm'>
-                還沒有帳號嗎？{' '}
                 <Link
-                  href='/signin/signup'
+                  href='/signin/email_signin'
                   className='underline underline-offset-4'>
-                  註冊
+                  返回登入
                 </Link>
               </div>
             </form>

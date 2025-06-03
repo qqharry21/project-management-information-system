@@ -101,22 +101,11 @@ ALTER TYPE "public"."quotation_status" OWNER TO "postgres";
 CREATE TYPE "public"."role_type" AS ENUM (
     'admin',
     'project_manager',
-    'team_member',
-    'client'
+    'team_member'
 );
 
 
 ALTER TYPE "public"."role_type" OWNER TO "postgres";
-
-
-CREATE TYPE "public"."subscription_status" AS ENUM (
-    'active',
-    'expired',
-    'cancelled'
-);
-
-
-ALTER TYPE "public"."subscription_status" OWNER TO "postgres";
 
 
 CREATE TYPE "public"."timeline_event_type" AS ENUM (
@@ -173,7 +162,7 @@ ALTER FUNCTION "public"."get_user_verification_status"("target_email" "text") OW
 
 
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
+    LANGUAGE "plpgsql"
     AS $$
 begin
   -- Insert into users table
@@ -201,19 +190,6 @@ SET default_tablespace = '';
 SET default_table_access_method = "heap";
 
 
-CREATE TABLE IF NOT EXISTS "public"."clients" (
-    "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
-    "name" "text" NOT NULL,
-    "contact_email" "text",
-    "contact_phone" "text",
-    "address" "text",
-    "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"())
-);
-
-
-ALTER TABLE "public"."clients" OWNER TO "postgres";
-
-
 CREATE TABLE IF NOT EXISTS "public"."closure_reports" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "project_id" "uuid",
@@ -229,7 +205,6 @@ ALTER TABLE "public"."closure_reports" OWNER TO "postgres";
 CREATE TABLE IF NOT EXISTS "public"."contracts" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "project_id" "uuid",
-    "client_id" "uuid",
     "contract_number" "text",
     "title" "text",
     "status" "public"."contract_status" DEFAULT 'draft'::"public"."contract_status" NOT NULL,
@@ -270,7 +245,6 @@ ALTER TABLE "public"."income" OWNER TO "postgres";
 CREATE TABLE IF NOT EXISTS "public"."invoices" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "project_id" "uuid",
-    "client_id" "uuid",
     "invoice_number" "text",
     "amount" numeric NOT NULL,
     "status" "public"."invoice_status" DEFAULT 'draft'::"public"."invoice_status" NOT NULL,
@@ -327,7 +301,6 @@ CREATE TABLE IF NOT EXISTS "public"."projects" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "name" "text" NOT NULL,
     "description" "text",
-    "client_id" "uuid",
     "start_date" "date",
     "end_date" "date",
     "status" "public"."project_status" DEFAULT 'active'::"public"."project_status" NOT NULL,
@@ -341,7 +314,6 @@ ALTER TABLE "public"."projects" OWNER TO "postgres";
 CREATE TABLE IF NOT EXISTS "public"."quotations" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "project_id" "uuid",
-    "client_id" "uuid",
     "quotation_number" "text",
     "amount" numeric NOT NULL,
     "status" "public"."quotation_status" DEFAULT 'draft'::"public"."quotation_status" NOT NULL,
@@ -353,18 +325,21 @@ CREATE TABLE IF NOT EXISTS "public"."quotations" (
 ALTER TABLE "public"."quotations" OWNER TO "postgres";
 
 
-CREATE TABLE IF NOT EXISTS "public"."subscriptions" (
+CREATE TABLE IF NOT EXISTS "public"."subscription_tracking" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
-    "client_id" "uuid",
-    "plan_name" "text",
-    "start_date" "date",
-    "end_date" "date",
-    "status" "public"."subscription_status" DEFAULT 'active'::"public"."subscription_status" NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"())
+    "project_id" "uuid",
+    "service_name" "text" NOT NULL,
+    "start_date" "date" NOT NULL,
+    "renewal_date" "date" NOT NULL,
+    "status" "text" NOT NULL,
+    "notes" "text",
+    "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    CONSTRAINT "subscription_tracking_status_check" CHECK (("status" = ANY (ARRAY['active'::"text", 'expired'::"text", 'cancelled'::"text"])))
 );
 
 
-ALTER TABLE "public"."subscriptions" OWNER TO "postgres";
+ALTER TABLE "public"."subscription_tracking" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."user_profiles" (
@@ -389,11 +364,6 @@ CREATE TABLE IF NOT EXISTS "public"."users" (
 
 
 ALTER TABLE "public"."users" OWNER TO "postgres";
-
-
-ALTER TABLE ONLY "public"."clients"
-    ADD CONSTRAINT "clients_pkey" PRIMARY KEY ("id");
-
 
 
 ALTER TABLE ONLY "public"."closure_reports"
@@ -461,8 +431,8 @@ ALTER TABLE ONLY "public"."quotations"
 
 
 
-ALTER TABLE ONLY "public"."subscriptions"
-    ADD CONSTRAINT "subscriptions_pkey" PRIMARY KEY ("id");
+ALTER TABLE ONLY "public"."subscription_tracking"
+    ADD CONSTRAINT "subscription_tracking_pkey" PRIMARY KEY ("id");
 
 
 
@@ -481,11 +451,11 @@ ALTER TABLE ONLY "public"."users"
 
 
 
-CREATE INDEX "contracts_project_id_client_id_idx" ON "public"."contracts" USING "btree" ("project_id", "client_id");
+CREATE INDEX "contracts_project_id_idx" ON "public"."contracts" USING "btree" ("project_id");
 
 
 
-CREATE INDEX "invoices_project_id_client_id_idx" ON "public"."invoices" USING "btree" ("project_id", "client_id");
+CREATE INDEX "invoices_project_id_idx" ON "public"."invoices" USING "btree" ("project_id");
 
 
 
@@ -497,11 +467,11 @@ CREATE INDEX "project_team_members_project_id_user_id_idx" ON "public"."project_
 
 
 
-CREATE INDEX "projects_client_id_idx" ON "public"."projects" USING "btree" ("client_id");
+CREATE INDEX "quotations_project_id_idx" ON "public"."quotations" USING "btree" ("project_id");
 
 
 
-CREATE INDEX "quotations_project_id_client_id_idx" ON "public"."quotations" USING "btree" ("project_id", "client_id");
+CREATE INDEX "subscription_tracking_project_id_idx" ON "public"."subscription_tracking" USING "btree" ("project_id");
 
 
 
@@ -512,11 +482,6 @@ ALTER TABLE ONLY "public"."closure_reports"
 
 ALTER TABLE ONLY "public"."closure_reports"
     ADD CONSTRAINT "closure_reports_submitted_by_fkey" FOREIGN KEY ("submitted_by") REFERENCES "public"."users"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."contracts"
-    ADD CONSTRAINT "contracts_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE SET NULL;
 
 
 
@@ -532,11 +497,6 @@ ALTER TABLE ONLY "public"."expenses"
 
 ALTER TABLE ONLY "public"."income"
     ADD CONSTRAINT "income_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."invoices"
-    ADD CONSTRAINT "invoices_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE SET NULL;
 
 
 
@@ -570,23 +530,13 @@ ALTER TABLE ONLY "public"."project_timeline_events"
 
 
 
-ALTER TABLE ONLY "public"."projects"
-    ADD CONSTRAINT "projects_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."quotations"
-    ADD CONSTRAINT "quotations_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE SET NULL;
-
-
-
 ALTER TABLE ONLY "public"."quotations"
     ADD CONSTRAINT "quotations_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE SET NULL;
 
 
 
-ALTER TABLE ONLY "public"."subscriptions"
-    ADD CONSTRAINT "subscriptions_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "public"."clients"("id") ON DELETE CASCADE;
+ALTER TABLE ONLY "public"."subscription_tracking"
+    ADD CONSTRAINT "subscription_tracking_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE CASCADE;
 
 
 
@@ -598,6 +548,185 @@ ALTER TABLE ONLY "public"."user_profiles"
 ALTER TABLE ONLY "public"."users"
     ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
 
+
+
+CREATE POLICY "Admins and PMs can manage all closure reports" ON "public"."closure_reports" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all contracts" ON "public"."contracts" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all expenses" ON "public"."expenses" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all files" ON "public"."project_files" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all income" ON "public"."income" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all invoices" ON "public"."invoices" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all projects" ON "public"."projects" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all quotations" ON "public"."quotations" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all subscriptions" ON "public"."subscription_tracking" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all team members" ON "public"."project_team_members" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins and PMs can manage all timeline events" ON "public"."project_timeline_events" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = ANY (ARRAY['admin'::"public"."role_type", 'project_manager'::"public"."role_type"]))))));
+
+
+
+CREATE POLICY "Admins can manage all profiles" ON "public"."user_profiles" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = 'admin'::"public"."role_type")))));
+
+
+
+CREATE POLICY "Admins can manage all users" ON "public"."users" USING ((EXISTS ( SELECT 1
+   FROM "public"."users" "u"
+  WHERE (("u"."id" = "auth"."uid"()) AND ("u"."role" = 'admin'::"public"."role_type")))));
+
+
+
+CREATE POLICY "Team members can view assigned projects" ON "public"."projects" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "projects"."id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Team members can view closure reports for assigned projects" ON "public"."closure_reports" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "closure_reports"."project_id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Team members can view events for assigned projects" ON "public"."project_timeline_events" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "project_timeline_events"."project_id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Team members can view expenses for assigned projects" ON "public"."expenses" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "expenses"."project_id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Team members can view files for assigned projects" ON "public"."project_files" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "project_files"."project_id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Team members can view income for assigned projects" ON "public"."income" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "income"."project_id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Team members can view subscriptions for assigned projects" ON "public"."subscription_tracking" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_team_members" "ptm"
+  WHERE (("ptm"."project_id" = "subscription_tracking"."project_id") AND ("ptm"."user_id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "Users can update their own profile" ON "public"."user_profiles" FOR UPDATE USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can update their own user row" ON "public"."users" FOR UPDATE USING (("id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can view their own profile" ON "public"."user_profiles" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can view their own team member rows" ON "public"."project_team_members" FOR SELECT USING (("user_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "Users can view their own user row" ON "public"."users" FOR SELECT USING (("id" = "auth"."uid"()));
+
+
+
+ALTER TABLE "public"."closure_reports" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."contracts" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."expenses" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."income" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."invoices" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."project_files" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."project_team_members" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."project_timeline_events" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."projects" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."quotations" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."subscription_tracking" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."user_profiles" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."users" ENABLE ROW LEVEL SECURITY;
 
 
 
@@ -795,12 +924,6 @@ GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
 
 
 
-GRANT ALL ON TABLE "public"."clients" TO "anon";
-GRANT ALL ON TABLE "public"."clients" TO "authenticated";
-GRANT ALL ON TABLE "public"."clients" TO "service_role";
-
-
-
 GRANT ALL ON TABLE "public"."closure_reports" TO "anon";
 GRANT ALL ON TABLE "public"."closure_reports" TO "authenticated";
 GRANT ALL ON TABLE "public"."closure_reports" TO "service_role";
@@ -861,9 +984,9 @@ GRANT ALL ON TABLE "public"."quotations" TO "service_role";
 
 
 
-GRANT ALL ON TABLE "public"."subscriptions" TO "anon";
-GRANT ALL ON TABLE "public"."subscriptions" TO "authenticated";
-GRANT ALL ON TABLE "public"."subscriptions" TO "service_role";
+GRANT ALL ON TABLE "public"."subscription_tracking" TO "anon";
+GRANT ALL ON TABLE "public"."subscription_tracking" TO "authenticated";
+GRANT ALL ON TABLE "public"."subscription_tracking" TO "service_role";
 
 
 

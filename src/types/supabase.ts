@@ -13,26 +13,32 @@ export type Database = {
         Row: {
           address: string | null
           contact_email: string | null
+          contact_person: string | null
           contact_phone: string | null
-          created_at: string | null
+          created_at: string
           id: string
           name: string
+          notes: string | null
         }
         Insert: {
           address?: string | null
           contact_email?: string | null
+          contact_person?: string | null
           contact_phone?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           name: string
+          notes?: string | null
         }
         Update: {
           address?: string | null
           contact_email?: string | null
+          contact_person?: string | null
           contact_phone?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           name?: string
+          notes?: string | null
         }
         Relationships: []
       }
@@ -77,7 +83,7 @@ export type Database = {
       }
       contracts: {
         Row: {
-          client_id: string | null
+          client_id: string
           contract_number: string | null
           created_at: string | null
           id: string
@@ -87,7 +93,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
-          client_id?: string | null
+          client_id: string
           contract_number?: string | null
           created_at?: string | null
           id?: string
@@ -97,7 +103,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
-          client_id?: string | null
+          client_id?: string
           contract_number?: string | null
           created_at?: string | null
           id?: string
@@ -196,7 +202,6 @@ export type Database = {
       invoices: {
         Row: {
           amount: number
-          client_id: string | null
           created_at: string | null
           due_date: string | null
           id: string
@@ -207,7 +212,6 @@ export type Database = {
         }
         Insert: {
           amount: number
-          client_id?: string | null
           created_at?: string | null
           due_date?: string | null
           id?: string
@@ -218,7 +222,6 @@ export type Database = {
         }
         Update: {
           amount?: number
-          client_id?: string | null
           created_at?: string | null
           due_date?: string | null
           id?: string
@@ -228,13 +231,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["invoice_status"]
         }
         Relationships: [
-          {
-            foreignKeyName: "invoices_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "invoices_project_id_fkey"
             columns: ["project_id"]
@@ -368,7 +364,7 @@ export type Database = {
       }
       projects: {
         Row: {
-          client_id: string | null
+          client_id: string
           created_at: string | null
           description: string | null
           end_date: string | null
@@ -378,7 +374,7 @@ export type Database = {
           status: Database["public"]["Enums"]["project_status"]
         }
         Insert: {
-          client_id?: string | null
+          client_id: string
           created_at?: string | null
           description?: string | null
           end_date?: string | null
@@ -388,7 +384,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["project_status"]
         }
         Update: {
-          client_id?: string | null
+          client_id?: string
           created_at?: string | null
           description?: string | null
           end_date?: string | null
@@ -410,7 +406,6 @@ export type Database = {
       quotations: {
         Row: {
           amount: number
-          client_id: string | null
           created_at: string | null
           id: string
           issued_at: string | null
@@ -420,7 +415,6 @@ export type Database = {
         }
         Insert: {
           amount: number
-          client_id?: string | null
           created_at?: string | null
           id?: string
           issued_at?: string | null
@@ -430,7 +424,6 @@ export type Database = {
         }
         Update: {
           amount?: number
-          client_id?: string | null
           created_at?: string | null
           id?: string
           issued_at?: string | null
@@ -440,13 +433,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "quotations_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "quotations_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
@@ -455,40 +441,56 @@ export type Database = {
           },
         ]
       }
-      subscriptions: {
+      subscription_tracking: {
         Row: {
-          client_id: string | null
-          created_at: string | null
-          end_date: string | null
+          client_id: string
+          created_at: string
           id: string
-          plan_name: string | null
-          start_date: string | null
-          status: Database["public"]["Enums"]["subscription_status"]
+          notes: string | null
+          project_id: string | null
+          renewal_date: string
+          service_name: string
+          start_date: string
+          status: string
+          updated_at: string
         }
         Insert: {
-          client_id?: string | null
-          created_at?: string | null
-          end_date?: string | null
+          client_id: string
+          created_at?: string
           id?: string
-          plan_name?: string | null
-          start_date?: string | null
-          status?: Database["public"]["Enums"]["subscription_status"]
+          notes?: string | null
+          project_id?: string | null
+          renewal_date: string
+          service_name: string
+          start_date: string
+          status: string
+          updated_at?: string
         }
         Update: {
-          client_id?: string | null
-          created_at?: string | null
-          end_date?: string | null
+          client_id?: string
+          created_at?: string
           id?: string
-          plan_name?: string | null
-          start_date?: string | null
-          status?: Database["public"]["Enums"]["subscription_status"]
+          notes?: string | null
+          project_id?: string | null
+          renewal_date?: string
+          service_name?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "subscriptions_client_id_fkey"
+            foreignKeyName: "subscription_tracking_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_tracking_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -568,8 +570,7 @@ export type Database = {
       invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled"
       project_status: "active" | "completed" | "on_hold" | "cancelled"
       quotation_status: "draft" | "sent" | "accepted" | "rejected"
-      role_type: "admin" | "project_manager" | "team_member" | "client"
-      subscription_status: "active" | "expired" | "cancelled"
+      role_type: "admin" | "project_manager" | "team_member"
       timeline_event_type: "milestone" | "task" | "meeting"
     }
     CompositeTypes: {
@@ -690,8 +691,7 @@ export const Constants = {
       invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
       project_status: ["active", "completed", "on_hold", "cancelled"],
       quotation_status: ["draft", "sent", "accepted", "rejected"],
-      role_type: ["admin", "project_manager", "team_member", "client"],
-      subscription_status: ["active", "expired", "cancelled"],
+      role_type: ["admin", "project_manager", "team_member"],
       timeline_event_type: ["milestone", "task", "meeting"],
     },
   },

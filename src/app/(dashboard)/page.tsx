@@ -10,7 +10,7 @@ export default function Page() {
   return (
     <>
       <SectionCards />
-      <div className='px-4 lg:px-6 grid grid-cols-1 @5xl/main:grid-cols-2 gap-4'>
+      <div className='grid grid-cols-1 @5xl/main:grid-cols-2 gap-4'>
         <ChartAreaInteractive />
         <ActiveProjects />
         <RecentContracts data={data} />

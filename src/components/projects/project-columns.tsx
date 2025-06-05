@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   IconCalendar,
   IconChevronDown,
@@ -15,84 +15,80 @@ import {
   IconEdit,
   IconTrash,
   IconUser,
-} from "@tabler/icons-react";
-import { ColumnDef } from "@tanstack/react-table";
-import { cva } from "class-variance-authority";
-import { useTranslations } from "next-intl";
-import { Button } from "../ui/button";
-import { ProjectWithClient } from "./project-dashboard";
+} from '@tabler/icons-react';
+import { ColumnDef } from '@tanstack/react-table';
+import { cva } from 'class-variance-authority';
+import { useTranslations } from 'next-intl';
+import { Button } from '../ui/button';
+import { ProjectWithClient } from './project-dashboard';
 
-export const statusVariants = cva("", {
+export const statusVariants = cva('', {
   variants: {
     status: {
-      active: "bg-green-100 text-green-800",
-      completed: "bg-blue-100 text-blue-800",
-      on_hold: "bg-yellow-100 text-yellow-800",
-      planning: "bg-gray-100 text-gray-800",
-      cancelled: "bg-red-100 text-red-800",
+      active: 'bg-green-100 text-green-800',
+      completed: 'bg-blue-100 text-blue-800',
+      on_hold: 'bg-yellow-100 text-yellow-800',
+      planning: 'bg-gray-100 text-gray-800',
+      cancelled: 'bg-red-100 text-red-800',
     },
   },
   defaultVariants: {
-    status: "active",
+    status: 'active',
   },
 });
 
-type ProjectStatus = ProjectWithClient["status"];
+type ProjectStatus = ProjectWithClient['status'];
 
-export const columns = (
-  t: ReturnType<typeof useTranslations>,
-): ColumnDef<ProjectWithClient>[] => [
+export const columns = (t: ReturnType<typeof useTranslations>): ColumnDef<ProjectWithClient>[] => [
   {
-    accessorKey: "name",
+    accessorKey: 'name',
     header: ({ column }) => (
       <div
-        className="flex items-center gap-1 cursor-pointer select-none"
-        onClick={column.getToggleSortingHandler()}
-      >
-        {t("Common.project_name")}
-        {column.getIsSorted() === "asc" ? (
+        className='flex items-center gap-1 cursor-pointer select-none'
+        onClick={column.getToggleSortingHandler()}>
+        {t('Common.project_name')}
+        {column.getIsSorted() === 'asc' ? (
           <span>
-            <IconChevronUp className="h-4 w-4" />
+            <IconChevronUp className='h-4 w-4' />
           </span>
-        ) : column.getIsSorted() === "desc" ? (
+        ) : column.getIsSorted() === 'desc' ? (
           <span>
-            <IconChevronDown className="h-4 w-4" />
+            <IconChevronDown className='h-4 w-4' />
           </span>
         ) : (
-          <span className="opacity-0">
-            <IconChevronDown className="h-4 w-4" />
+          <span className='opacity-0'>
+            <IconChevronDown className='h-4 w-4' />
           </span>
         )}
       </div>
     ),
     cell: (info) => (
       <div>
-        <div className="font-medium">{info.getValue() as string}</div>
-        <div className="text-sm text-muted-foreground truncate max-w-80">
+        <div className='font-medium'>{info.getValue() as string}</div>
+        <div className='text-sm text-muted-foreground truncate max-w-80'>
           {(info.row.original as ProjectWithClient).description}
         </div>
       </div>
     ),
   },
   {
-    accessorKey: "status",
+    accessorKey: 'status',
     header: ({ column }) => (
       <div
-        className="flex items-center gap-1 cursor-pointer select-none"
-        onClick={column.getToggleSortingHandler()}
-      >
-        <span>{t("Common.status")}</span>
-        {column.getIsSorted() === "asc" ? (
+        className='flex items-center gap-1 cursor-pointer select-none'
+        onClick={column.getToggleSortingHandler()}>
+        <span>{t('Common.status')}</span>
+        {column.getIsSorted() === 'asc' ? (
           <span>
-            <IconChevronUp className="h-4 w-4" />
+            <IconChevronUp className='h-4 w-4' />
           </span>
-        ) : column.getIsSorted() === "desc" ? (
+        ) : column.getIsSorted() === 'desc' ? (
           <span>
-            <IconChevronDown className="h-4 w-4" />
+            <IconChevronDown className='h-4 w-4' />
           </span>
         ) : (
-          <span className="opacity-0">
-            <IconChevronDown className="h-4 w-4" />
+          <span className='opacity-0'>
+            <IconChevronDown className='h-4 w-4' />
           </span>
         )}
       </div>
@@ -101,42 +97,40 @@ export const columns = (
       <Badge
         className={statusVariants({
           status: info.getValue() as ProjectStatus,
-        })}
-      >
+        })}>
         {t(`Status.${info.getValue()}`)}
       </Badge>
     ),
-    filterFn: "equals",
+    filterFn: 'equals',
   },
   {
-    accessorKey: "clients.name",
-    header: t("Common.client"),
+    accessorKey: 'clients.name',
+    header: t('Common.client'),
     cell: (info) => (
-      <div className="flex items-center gap-1">
-        <IconUser className="h-4 w-4 text-muted-foreground" />
+      <div className='flex items-center gap-1'>
+        <IconUser className='h-4 w-4 text-muted-foreground' />
         <span>{info.getValue() as string}</span>
       </div>
     ),
   },
   {
-    accessorKey: "start_date",
+    accessorKey: 'start_date',
     header: ({ column }) => (
       <div
-        className="flex items-center gap-1 cursor-pointer select-none"
-        onClick={column.getToggleSortingHandler()}
-      >
-        {t("Common.start_date")}
-        {column.getIsSorted() === "asc" ? (
+        className='flex items-center gap-1 cursor-pointer select-none'
+        onClick={column.getToggleSortingHandler()}>
+        {t('Common.start_date')}
+        {column.getIsSorted() === 'asc' ? (
           <span>
-            <IconChevronUp className="h-4 w-4" />
+            <IconChevronUp className='h-4 w-4' />
           </span>
-        ) : column.getIsSorted() === "desc" ? (
+        ) : column.getIsSorted() === 'desc' ? (
           <span>
-            <IconChevronDown className="h-4 w-4" />
+            <IconChevronDown className='h-4 w-4' />
           </span>
         ) : (
-          <span className="opacity-0">
-            <IconChevronDown className="h-4 w-4" />
+          <span className='opacity-0'>
+            <IconChevronDown className='h-4 w-4' />
           </span>
         )}
       </div>
@@ -144,41 +138,40 @@ export const columns = (
     cell: (info) => (
       <>
         {info.getValue() ? (
-          <div className="flex items-center gap-1">
-            <IconCalendar className="h-4 w-4 text-muted-foreground" />
+          <div className='flex items-center gap-1'>
+            <IconCalendar className='h-4 w-4 text-muted-foreground' />
             <span>
-              {new Date(info.getValue() as string).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
+              {new Date(info.getValue() as string).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
               })}
             </span>
           </div>
         ) : (
-          <span className="text-muted-foreground">-</span>
+          <span className='text-muted-foreground'>-</span>
         )}
       </>
     ),
   },
   {
-    accessorKey: "end_date",
+    accessorKey: 'end_date',
     header: ({ column }) => (
       <div
-        className="flex items-center gap-1 cursor-pointer select-none"
-        onClick={column.getToggleSortingHandler()}
-      >
-        {t("Common.end_date")}
-        {column.getIsSorted() === "asc" ? (
+        className='flex items-center gap-1 cursor-pointer select-none'
+        onClick={column.getToggleSortingHandler()}>
+        {t('Common.end_date')}
+        {column.getIsSorted() === 'asc' ? (
           <span>
-            <IconChevronUp className="h-4 w-4" />
+            <IconChevronUp className='h-4 w-4' />
           </span>
-        ) : column.getIsSorted() === "desc" ? (
+        ) : column.getIsSorted() === 'desc' ? (
           <span>
-            <IconChevronDown className="h-4 w-4" />
+            <IconChevronDown className='h-4 w-4' />
           </span>
         ) : (
-          <span className="opacity-0">
-            <IconChevronDown className="h-4 w-4" />
+          <span className='opacity-0'>
+            <IconChevronDown className='h-4 w-4' />
           </span>
         )}
       </div>
@@ -186,46 +179,47 @@ export const columns = (
     cell: (info) => (
       <>
         {info.getValue() ? (
-          <div className="flex items-center gap-1">
-            <IconCalendar className="h-4 w-4 text-muted-foreground" />
+          <div className='flex items-center gap-1'>
+            <IconCalendar className='h-4 w-4 text-muted-foreground' />
             <span>
-              {new Date(info.getValue() as string).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
+              {new Date(info.getValue() as string).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
               })}
             </span>
           </div>
         ) : (
-          <span className="text-muted-foreground">-</span>
+          <span className='text-muted-foreground'>-</span>
         )}
       </>
     ),
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: () => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
+            variant='ghost'
+            className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
+            size='icon'>
             <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
+            <span className='sr-only'>Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuLabel>{t("Common.actions")}</DropdownMenuLabel>
+        <DropdownMenuContent
+          align='end'
+          className='w-32'>
+          <DropdownMenuLabel>{t('Common.actions')}</DropdownMenuLabel>
           <DropdownMenuItem>
-            <IconEdit className="h-4 w-4" />
-            {t("Common.edit")}
+            <IconEdit className='h-4 w-4' />
+            {t('Common.view_details')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">
-            <IconTrash className="h-4 w-4" />
-            {t("Common.delete")}
+          <DropdownMenuItem variant='destructive'>
+            <IconTrash className='h-4 w-4' />
+            {t('Common.delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

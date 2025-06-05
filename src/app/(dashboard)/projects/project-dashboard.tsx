@@ -1,16 +1,17 @@
 'use client';
-import { useProjectDashboardStore } from '@/store/project-dashboard-store';
+
 import type { Tables } from '@supabase/types';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import {
-  ColumnDef,
+  ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
+import { columns } from './project-columns';
 import ProjectFilters from './project-filters';
 import ProjectList from './project-list';
 import ProjectPagination from './project-pagination';
@@ -18,141 +19,19 @@ import ProjectStats from './project-stats';
 
 export type ProjectWithClient = Tables<'projects'> & { clients?: { name: string } };
 
-const columns: ColumnDef<ProjectWithClient>[] = [
-  {
-    accessorKey: 'name',
-    header: ({ column }) => (
-      <div
-        className='flex items-center gap-1 cursor-pointer select-none'
-        onClick={column.getToggleSortingHandler()}>
-        {'專案名稱'}
-        {column.getIsSorted() === 'asc' ? (
-          <span>
-            <IconChevronUp className='h-4 w-4' />
-          </span>
-        ) : column.getIsSorted() === 'desc' ? (
-          <span>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        ) : (
-          <span className='opacity-0'>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        )}
-      </div>
-    ),
-    cell: (info) => (
-      <div>
-        <div className='font-medium'>{info.getValue() as string}</div>
-        <div className='text-sm text-muted-foreground'>
-          {(info.row.original as ProjectWithClient).description}
-        </div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <div
-        className='flex items-center gap-1 cursor-pointer select-none'
-        onClick={column.getToggleSortingHandler()}>
-        {'狀態'}
-        {column.getIsSorted() === 'asc' ? (
-          <span>
-            <IconChevronUp className='h-4 w-4' />
-          </span>
-        ) : column.getIsSorted() === 'desc' ? (
-          <span>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        ) : (
-          <span className='opacity-0'>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        )}
-      </div>
-    ),
-    cell: (info) => <span>{info.getValue() as string}</span>,
-  },
-  {
-    accessorKey: 'clients.name',
-    header: '客戶',
-    cell: (info) => info.row.original.clients?.name || '-',
-  },
-  {
-    accessorKey: 'start_date',
-    header: ({ column }) => (
-      <div
-        className='flex items-center gap-1 cursor-pointer select-none'
-        onClick={column.getToggleSortingHandler()}>
-        {'開始日期'}
-        {column.getIsSorted() === 'asc' ? (
-          <span>
-            <IconChevronUp className='h-4 w-4' />
-          </span>
-        ) : column.getIsSorted() === 'desc' ? (
-          <span>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        ) : (
-          <span className='opacity-0'>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        )}
-      </div>
-    ),
-    cell: (info) =>
-      info.getValue()
-        ? new Date(info.getValue() as string).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })
-        : '-',
-  },
-  {
-    accessorKey: 'end_date',
-    header: ({ column }) => (
-      <div
-        className='flex items-center gap-1 cursor-pointer select-none'
-        onClick={column.getToggleSortingHandler()}>
-        {'結束日期'}
-        {column.getIsSorted() === 'asc' ? (
-          <span>
-            <IconChevronUp className='h-4 w-4' />
-          </span>
-        ) : column.getIsSorted() === 'desc' ? (
-          <span>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        ) : (
-          <span className='opacity-0'>
-            <IconChevronDown className='h-4 w-4' />
-          </span>
-        )}
-      </div>
-    ),
-    cell: (info) =>
-      info.getValue()
-        ? new Date(info.getValue() as string).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })
-        : '-',
-  },
-];
-
 interface ProjectDashboardProps {
   projects: ProjectWithClient[];
 }
 
 export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
-  const { searchTerm, statusFilter, viewMode, currentPage, setCurrentPage } =
-    useProjectDashboardStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const itemsPerPage = 10;
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const table = useReactTable({
     data: projects,
@@ -160,11 +39,16 @@ export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
     state: {
       sorting,
       globalFilter: searchTerm,
+      pagination,
+      columnFilters,
     },
     onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     globalFilterFn: (row, columnId, filterValue) => {
       // Search in name, description, and client name
       const project = row.original as ProjectWithClient;
@@ -180,17 +64,19 @@ export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
     manualSorting: false,
   });
 
-  const filteredRows = table.getFilteredRowModel().rows.filter((row) => {
-    if (statusFilter === 'all') return true;
-    return row.original.status === statusFilter;
-  });
-
-  const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-  const paginatedRows = filteredRows.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  const paginatedProjects = paginatedRows.map((row) => row.original);
+  // 取得目前 status filter 狀態
+  const statusFilter = String(columnFilters.find((f) => f.id === 'status')?.value ?? 'all');
+  const setStatusFilter = (value: string) => {
+    setColumnFilters((prev) => {
+      // 移除 status filter
+      if (value === 'all') {
+        return prev.filter((f) => f.id !== 'status');
+      }
+      // 設定 status filter
+      const otherFilters = prev.filter((f) => f.id !== 'status');
+      return [...otherFilters, { id: 'status', value }];
+    });
+  };
 
   return (
     <>
@@ -201,20 +87,19 @@ export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
         </div>
       </div>
       <ProjectStats projects={projects} />
-      <ProjectFilters />
-      <ProjectList
-        projects={paginatedProjects}
+      <ProjectFilters
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
         viewMode={viewMode}
-        columns={columns}
+        setViewMode={setViewMode}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+      />
+      <ProjectList
+        viewMode={viewMode}
         table={table}
       />
-      <ProjectPagination
-        itemsPerPage={itemsPerPage}
-        total={filteredRows.length}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <ProjectPagination table={table} />
     </>
   );
 }

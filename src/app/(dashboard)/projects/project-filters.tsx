@@ -6,13 +6,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { useProjectDashboardStore } from '@/store/project-dashboard-store';
-import { Filter, Grid3X3, List, Search } from 'lucide-react';
+import { Check, Filter, Grid3X3, List, Search } from 'lucide-react';
 
-export default function ProjectFilters() {
-  const { searchTerm, setSearchTerm, setStatusFilter, viewMode, setViewMode } =
-    useProjectDashboardStore();
-
+export default function ProjectFilters({
+  searchTerm,
+  setSearchTerm,
+  viewMode,
+  setViewMode,
+  /**
+   * 狀態欄位的 column filter 狀態
+   */
+  statusFilter,
+  /**
+   * 設定狀態欄位的 column filter
+   */
+  setStatusFilter,
+}: {
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  viewMode: 'table' | 'grid';
+  setViewMode: (value: 'table' | 'grid') => void;
+  statusFilter: string;
+  setStatusFilter: (value: string) => void;
+}) {
   return (
     <div className='flex flex-wrap gap-4 items-start sm:items-center justify-between mb-6'>
       {/* Search */}
@@ -57,12 +73,30 @@ export default function ProjectFilters() {
           <DropdownMenuContent
             align='end'
             className='w-40'>
-            <DropdownMenuItem onClick={() => setStatusFilter('all')}>全部</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('active')}>進行中</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('completed')}>已完成</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('on_hold')}>已暫停</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('planning')}>規劃中</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('cancelled')}>已取消</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter('all')}>
+              全部
+              {statusFilter === 'all' && <Check className='ml-auto h-4 w-4 text-primary' />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter('active')}>
+              進行中
+              {statusFilter === 'active' && <Check className='ml-auto h-4 w-4 text-primary' />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter('completed')}>
+              已完成
+              {statusFilter === 'completed' && <Check className='ml-auto h-4 w-4 text-primary' />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter('on_hold')}>
+              已暫停
+              {statusFilter === 'on_hold' && <Check className='ml-auto h-4 w-4 text-primary' />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter('planning')}>
+              規劃中
+              {statusFilter === 'planning' && <Check className='ml-auto h-4 w-4 text-primary' />}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter('cancelled')}>
+              已取消
+              {statusFilter === 'cancelled' && <Check className='ml-auto h-4 w-4 text-primary' />}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,15 +8,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { DialogActionType, useDialogStore } from '@/store/dialog-store';
-import * as React from 'react';
+} from "@/components/ui/dialog";
+import { DialogActionType, useDialogStore } from "@/store/dialog-store";
+import * as React from "react";
 
 interface ActionDialogProps {
   title: string;
   description?: string;
   children: React.ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
 /**
@@ -48,22 +48,30 @@ export function GlobalActionDialog() {
 /**
  * Base dialog component that wraps content with standard dialog UI
  */
-export function ActionDialog({ title, description, children, maxWidth = 'md' }: ActionDialogProps) {
+export function ActionDialog({
+  title,
+  description,
+  children,
+  maxWidth = "md",
+}: ActionDialogProps) {
   const { isOpen, closeDialog } = useDialogStore();
 
   const maxWidthClass = {
-    sm: 'sm:max-w-sm',
-    md: 'sm:max-w-md',
-    lg: 'sm:max-w-lg',
-    xl: 'sm:max-w-xl',
-    '2xl': 'sm:max-w-2xl',
+    sm: "sm:max-w-sm",
+    md: "sm:max-w-md",
+    lg: "sm:max-w-lg",
+    xl: "sm:max-w-xl",
+    "2xl": "sm:max-w-2xl",
   }[maxWidth];
 
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open: boolean) => !open && closeDialog()}>
-      <DialogContent className={`${maxWidthClass} overflow-y-auto max-h-[90vh]`}>
+      onOpenChange={(open: boolean) => !open && closeDialog()}
+    >
+      <DialogContent
+        className={`${maxWidthClass} overflow-y-auto max-h-[90vh]`}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
@@ -81,17 +89,19 @@ export function ActionDialog({ title, description, children, maxWidth = 'md' }: 
 function NewProjectDialog() {
   return (
     <ActionDialog
-      title='Create New Project'
-      description='Fill in the details to create a new project.'>
+      title="Create New Project"
+      description="Fill in the details to create a new project."
+    >
       {/* Project form fields will go here */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         <p>Project form content will go here</p>
       </div>
 
-      <DialogFooter className='mt-6'>
+      <DialogFooter className="mt-6">
         <Button
-          variant='outline'
-          onClick={() => useDialogStore.getState().closeDialog()}>
+          variant="outline"
+          onClick={() => useDialogStore.getState().closeDialog()}
+        >
           Cancel
         </Button>
         <Button>Create Project</Button>
@@ -106,17 +116,19 @@ function NewProjectDialog() {
 function NewContractDialog() {
   return (
     <ActionDialog
-      title='New Contract'
-      description='Create a new contract for a client or project.'>
+      title="New Contract"
+      description="Create a new contract for a client or project."
+    >
       {/* Contract form fields will go here */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         <p>Contract form content will go here</p>
       </div>
 
-      <DialogFooter className='mt-6'>
+      <DialogFooter className="mt-6">
         <Button
-          variant='outline'
-          onClick={() => useDialogStore.getState().closeDialog()}>
+          variant="outline"
+          onClick={() => useDialogStore.getState().closeDialog()}
+        >
           Cancel
         </Button>
         <Button>Create Contract</Button>
@@ -131,17 +143,19 @@ function NewContractDialog() {
 function CreateInvoiceDialog() {
   return (
     <ActionDialog
-      title='Create Invoice'
-      description='Generate a new invoice for a client or project.'>
+      title="Create Invoice"
+      description="Generate a new invoice for a client or project."
+    >
       {/* Invoice form fields will go here */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         <p>Invoice form content will go here</p>
       </div>
 
-      <DialogFooter className='mt-6'>
+      <DialogFooter className="mt-6">
         <Button
-          variant='outline'
-          onClick={() => useDialogStore.getState().closeDialog()}>
+          variant="outline"
+          onClick={() => useDialogStore.getState().closeDialog()}
+        >
           Cancel
         </Button>
         <Button>Generate Invoice</Button>
@@ -156,17 +170,19 @@ function CreateInvoiceDialog() {
 function AddClientDialog() {
   return (
     <ActionDialog
-      title='Add Client'
-      description='Add a new client to your system.'>
+      title="Add Client"
+      description="Add a new client to your system."
+    >
       {/* Client form fields will go here */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         <p>Client form content will go here</p>
       </div>
 
-      <DialogFooter className='mt-6'>
+      <DialogFooter className="mt-6">
         <Button
-          variant='outline'
-          onClick={() => useDialogStore.getState().closeDialog()}>
+          variant="outline"
+          onClick={() => useDialogStore.getState().closeDialog()}
+        >
           Cancel
         </Button>
         <Button>Add Client</Button>
@@ -181,17 +197,19 @@ function AddClientDialog() {
 function NewQuotationDialog() {
   return (
     <ActionDialog
-      title='New Quotation'
-      description='Create a new quotation for a client.'>
+      title="New Quotation"
+      description="Create a new quotation for a client."
+    >
       {/* Quotation form fields will go here */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         <p>Quotation form content will go here</p>
       </div>
 
-      <DialogFooter className='mt-6'>
+      <DialogFooter className="mt-6">
         <Button
-          variant='outline'
-          onClick={() => useDialogStore.getState().closeDialog()}>
+          variant="outline"
+          onClick={() => useDialogStore.getState().closeDialog()}
+        >
           Cancel
         </Button>
         <Button>Create Quotation</Button>

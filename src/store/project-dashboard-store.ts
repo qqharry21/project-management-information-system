@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-type ViewMode = 'table' | 'grid';
+type ViewMode = "table" | "grid";
 
 export interface ProjectDashboardState {
   searchTerm: string;
@@ -13,13 +13,15 @@ export interface ProjectDashboardState {
   setCurrentPage: (v: number) => void;
 }
 
-export const useProjectDashboardStore = create<ProjectDashboardState>((set) => ({
-  searchTerm: '',
-  statusFilter: 'all',
-  viewMode: 'table',
-  currentPage: 1,
-  setSearchTerm: (searchTerm) => set({ searchTerm }),
-  setStatusFilter: (statusFilter) => set({ statusFilter }),
-  setViewMode: (viewMode) => set({ viewMode }),
-  setCurrentPage: (currentPage) => set({ currentPage }),
-}));
+export const useProjectDashboardStore = create<ProjectDashboardState>(
+  (set) => ({
+    searchTerm: "",
+    statusFilter: "all",
+    viewMode: "table",
+    currentPage: 1,
+    setSearchTerm: (searchTerm) => set({ searchTerm }),
+    setStatusFilter: (statusFilter) => set({ statusFilter }),
+    setViewMode: (viewMode) => set({ viewMode }),
+    setCurrentPage: (currentPage) => set({ currentPage }),
+  }),
+);

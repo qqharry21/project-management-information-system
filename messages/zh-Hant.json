@@ -1,0 +1,84 @@
+{
+  "Common": {
+    "project_name": "專案名稱",
+    "status": "狀態",
+    "client": "客戶",
+    "start_date": "開始日期",
+    "end_date": "結束日期",
+    "description": "描述",
+    "reviewer": "審核人",
+    "value": "金額",
+    "date": "日期",
+    "target": "目標",
+    "limit": "上限",
+    "section_type": "區段類型",
+    "header": "標題",
+    "list": "列表",
+    "grid": "網格",
+    "view_details": "檢視詳情",
+    "edit": "編輯",
+    "delete": "刪除",
+    "actions": "動作",
+    "search": "搜尋",
+    "all": "全部",
+    "save": "儲存",
+    "cancel": "取消",
+    "confirm": "確定",
+    "submit": "提交",
+    "no_data": "沒有資料",
+    "empty": "尚無資料"
+  },
+  "Status": {
+    "active": "正在進行中",
+    "completed": "已完成",
+    "on_hold": "暫停中",
+    "planning": "規劃中",
+    "cancelled": "已取消",
+    "in_process": "進行中",
+    "done": "已完成",
+    "overdue": "已逾期",
+    "today": "今日到期",
+    "3days": "3天內到期",
+    "7days": "7天內到期"
+  },
+  "Dashboard": {
+    "project_management": "專案管理",
+    "project_management_desc": "在這裡管理並追蹤所有專案",
+    "total_projects": "總專案數",
+    "active_projects": "進行中專案",
+    "completed_projects": "已完成專案",
+    "total_projects_desc": "從上個月",
+    "active_projects_desc": "目前進行中",
+    "completed_projects_desc": "成功交付"
+  },
+  "Auth": {
+    "signin": "登入",
+    "signup": "建立帳號",
+    "forgot_password": "忘記密碼",
+    "reset_password": "重設密碼",
+    "email": "電子郵件",
+    "password": "密碼",
+    "confirm_password": "確認密碼",
+    "send_reset_email": "發送重設密碼信件",
+    "resend_email": "重新發送驗證信",
+    "not_received_email": "還沒收到驗證信嗎？",
+    "or": "或",
+    "register": "註冊"
+  },
+  "Message": {
+    "success": "成功",
+    "error": "錯誤",
+    "warning": "警告",
+    "info": "資訊",
+    "loading": "加載中"
+  },
+  "Subscription": {
+    "subscription_reminder": "訂閱到期提醒",
+    "no_due_subscription": "近期無到期訂閱",
+    "renew": "續訂"
+  },
+  "Contract": {
+    "recent_contracts": "最近合約",
+    "no_contracts": "最近沒有合約"
+  }
+}

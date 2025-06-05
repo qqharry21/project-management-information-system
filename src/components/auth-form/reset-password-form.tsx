@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -15,12 +21,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client';
-import { IconLoader, IconLock } from '@tabler/icons-react';
-import Link from 'next/link';
-import { toast } from 'sonner';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/client";
+import { IconLoader, IconLock } from "@tabler/icons-react";
+import Link from "next/link";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -36,14 +42,14 @@ const formSchema = z
         return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
       },
       {
-        message: '密碼必須至少8個字元，包含大小寫字母、數字和特殊字元。',
-      }
+        message: "密碼必須至少8個字元，包含大小寫字母、數字和特殊字元。",
+      },
     ),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: '密碼不匹配',
-    path: ['confirmPassword'],
+    message: "密碼不匹配",
+    path: ["confirmPassword"],
   });
 
 export default function ResetPasswordForm() {
@@ -54,12 +60,12 @@ export default function ResetPasswordForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      password: '',
-      confirmPassword: '',
+      password: "",
+      confirmPassword: "",
     },
   });
 
-  const password = form.watch('password');
+  const password = form.watch("password");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -74,14 +80,14 @@ export default function ResetPasswordForm() {
         return;
       }
 
-      toast.success('密碼重設成功', {
-        description: '您現在可以使用新密碼登入。',
+      toast.success("密碼重設成功", {
+        description: "您現在可以使用新密碼登入。",
       });
 
-      router.push('/signin/email_signin');
+      router.push("/signin/email_signin");
     } catch (error) {
       console.error(error);
-      toast.error('發生錯誤，請再試一次。');
+      toast.error("發生錯誤，請再試一次。");
     } finally {
       setIsLoading(false);
     }
@@ -90,28 +96,22 @@ export default function ResetPasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-xl'>重設密碼</CardTitle>
+        <CardTitle className="text-xl">重設密碼</CardTitle>
         <CardDescription>請輸入您的新密碼</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='space-y-6'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name='password'
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>新密碼</FormLabel>
-                  <div className='relative'>
-                    <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                  <div className="relative">
+                    <IconLock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <FormControl>
-                      <Input
-                        type='password'
-                        className='pl-9'
-                        {...field}
-                      />
+                      <Input type="password" className="pl-9" {...field} />
                     </FormControl>
                   </div>
                   <FormMessage />
@@ -121,18 +121,14 @@ export default function ResetPasswordForm() {
             {password && (
               <FormField
                 control={form.control}
-                name='confirmPassword'
+                name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>確認新密碼</FormLabel>
-                    <div className='relative'>
-                      <IconLock className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                    <div className="relative">
+                      <IconLock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <FormControl>
-                        <Input
-                          type='password'
-                          className='pl-9'
-                          {...field}
-                        />
+                        <Input type="password" className="pl-9" {...field} />
                       </FormControl>
                     </div>
                     <FormMessage />
@@ -140,23 +136,21 @@ export default function ResetPasswordForm() {
                 )}
               />
             )}
-            <Button
-              type='submit'
-              className='w-full'
-              disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <IconLoader className='mr-2 h-4 w-4 animate-spin' />
+                  <IconLoader className="mr-2 h-4 w-4 animate-spin" />
                   重設密碼中...
                 </>
               ) : (
-                '重設密碼'
+                "重設密碼"
               )}
             </Button>
-            <div className='text-center text-sm'>
+            <div className="text-center text-sm">
               <Link
-                href='/signin/email_signin'
-                className='underline underline-offset-4'>
+                href="/signin/email_signin"
+                className="underline underline-offset-4"
+              >
                 返回登入
               </Link>
             </div>

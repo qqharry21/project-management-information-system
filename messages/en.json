@@ -1,0 +1,84 @@
+{
+  "Common": {
+    "project_name": "Project Name",
+    "status": "Status",
+    "client": "Client",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "description": "Description",
+    "reviewer": "Reviewer",
+    "value": "Amount",
+    "date": "Date",
+    "target": "Target",
+    "limit": "Limit",
+    "section_type": "Section Type",
+    "header": "Header",
+    "list": "List",
+    "grid": "Grid",
+    "view_details": "View Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "actions": "Actions",
+    "search": "Search",
+    "all": "All",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "no_data": "No data",
+    "empty": "No records"
+  },
+  "Status": {
+    "active": "Active",
+    "completed": "Completed",
+    "on_hold": "On Hold",
+    "planning": "Planning",
+    "cancelled": "Cancelled",
+    "in_process": "In Process",
+    "done": "Done",
+    "overdue": "Overdue",
+    "today": "Due Today",
+    "3days": "Due in 3 days",
+    "7days": "Due in 7 days"
+  },
+  "Dashboard": {
+    "project_management": "Project Management",
+    "project_management_desc": "Manage and track all projects here",
+    "total_projects": "Total Projects",
+    "active_projects": "Active Projects",
+    "completed_projects": "Completed Projects",
+    "total_projects_desc": "since last month",
+    "active_projects_desc": "Currently active",
+    "completed_projects_desc": "Successfully delivered"
+  },
+  "Auth": {
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "forgot_password": "Forgot Password",
+    "reset_password": "Reset Password",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "send_reset_email": "Send Reset Email",
+    "resend_email": "Resend Verification Email",
+    "not_received_email": "Haven't received the verification email?",
+    "or": "or",
+    "register": "Register"
+  },
+  "Message": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "loading": "Loading"
+  },
+  "Subscription": {
+    "subscription_reminder": "Subscription Reminder",
+    "no_due_subscription": "No upcoming due subscriptions",
+    "renew": "Renew"
+  },
+  "Contract": {
+    "recent_contracts": "Recent Contracts",
+    "no_contracts": "No recent contracts"
+  }
+}

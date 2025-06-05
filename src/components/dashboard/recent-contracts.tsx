@@ -1,12 +1,21 @@
-'use client';
+"use client";
 
-import { IconArrowUpRight, IconCircleCheckFilled, IconLoader } from '@tabler/icons-react';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import Link from 'next/link';
-import { z } from 'zod';
+import {
+  IconArrowUpRight,
+  IconCircleCheckFilled,
+  IconLoader,
+} from "@tabler/icons-react";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import Link from "next/link";
+import { z } from "zod";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -14,7 +23,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -22,7 +31,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 export const schema = z.object({
   id: z.number(),
@@ -37,8 +46,8 @@ export const schema = z.object({
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
-    accessorKey: 'client',
-    header: '客戶名稱',
+    accessorKey: "client",
+    header: "客戶名稱",
     cell: ({ row }) => {
       // TODO: 顯示 client 的 name
       return <div>{row.original.header}</div>;
@@ -46,39 +55,37 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
-    header: '狀態',
+    accessorKey: "status",
+    header: "狀態",
     cell: ({ row }) => (
-      <Badge
-        variant='outline'
-        className='text-muted-foreground px-1.5'>
-        {row.original.status === 'Done' ? (
-          <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400' />
+      <Badge variant="outline" className="text-muted-foreground px-1.5">
+        {row.original.status === "Done" ? (
+          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
         ) : (
           <IconLoader />
         )}
-        {row.original.status === 'Done' ? '已完成' : '進行中'}
+        {row.original.status === "Done" ? "已完成" : "進行中"}
       </Badge>
     ),
   },
   {
-    accessorKey: 'date',
-    header: '日期',
+    accessorKey: "date",
+    header: "日期",
     cell: ({ row }) =>
-      new Date(row.original.date).toLocaleDateString('zh-TW', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
+      new Date(row.original.date).toLocaleDateString("zh-TW", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
       }),
   },
   {
-    accessorKey: 'value',
-    header: () => <div className='w-full text-right'>金額</div>,
+    accessorKey: "value",
+    header: () => <div className="w-full text-right">金額</div>,
     cell: ({ row }) => (
-      <div className='w-full text-right'>
-        {row.original.value.toLocaleString('zh-TW', {
-          style: 'currency',
-          currency: 'TWD',
+      <div className="w-full text-right">
+        {row.original.value.toLocaleString("zh-TW", {
+          style: "currency",
+          currency: "TWD",
           minimumFractionDigits: 0,
         })}
       </div>
@@ -86,7 +93,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
 ];
 
-export const RecentContracts = ({ data: initialData }: { data: z.infer<typeof schema>[] }) => {
+export const RecentContracts = ({
+  data: initialData,
+}: {
+  data: z.infer<typeof schema>[];
+}) => {
   const table = useReactTable({
     data: initialData.slice(0, 5),
     columns,
@@ -99,44 +110,45 @@ export const RecentContracts = ({ data: initialData }: { data: z.infer<typeof sc
         <CardTitle>最近合約</CardTitle>
         <CardDescription>查看最近 5 筆</CardDescription>
         <CardAction>
-          <Button
-            variant='outline'
-            size='sm'
-            asChild>
-            <Link href='/contracts'>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/contracts">
               查看更多
-              <IconArrowUpRight className='h-4 w-4' />
+              <IconArrowUpRight className="h-4 w-4" />
             </Link>
           </Button>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <div className='overflow-hidden rounded-lg border'>
+        <div className="overflow-hidden rounded-lg border">
           <Table>
-            <TableHeader className='bg-muted sticky top-0 z-10'>
+            <TableHeader className="bg-muted sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead
-                        key={header.id}
-                        colSpan={header.colSpan}>
+                      <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder
                           ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
                       </TableHead>
                     );
                   })}
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody className='**:data-[slot=table-cell]:first:w-8'>
+            <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -145,7 +157,8 @@ export const RecentContracts = ({ data: initialData }: { data: z.infer<typeof sc
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className='h-24 text-center'>
+                    className="h-24 text-center"
+                  >
                     最近沒有合約
                   </TableCell>
                 </TableRow>

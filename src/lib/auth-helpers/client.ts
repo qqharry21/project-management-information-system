@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { type Provider } from '@supabase/supabase-js';
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { type Provider } from "@supabase/supabase-js";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-import { getURL } from '@/lib/utils';
+import { getURL } from "@/lib/utils";
 
-import { createClient } from '../supabase/client';
-import { redirectToPath } from './server';
+import { createClient } from "../supabase/client";
+import { redirectToPath } from "./server";
 
 export async function handleFormRequest(
   formData: FormData,
   requestFunc: (formData: FormData) => Promise<string>,
-  router?: AppRouterInstance
+  router?: AppRouterInstance,
 ): Promise<boolean | void> {
   const redirectUrl: string = await requestFunc(formData);
 
@@ -28,11 +28,11 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   // Prevent default form submission refresh
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
-  const provider = String(formData.get('provider')).trim() as Provider;
+  const provider = String(formData.get("provider")).trim() as Provider;
 
   // Create client-side supabase client and call signInWithOAuth
   const supabase = createClient();
-  const redirectURL = getURL('/auth/callback');
+  const redirectURL = getURL("/auth/callback");
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
@@ -43,12 +43,12 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
 
 export async function checkEmailExists(email: string): Promise<boolean> {
   const supabase = createClient();
-  const { data, error } = await supabase.rpc('check_user_email_exists', {
+  const { data, error } = await supabase.rpc("check_user_email_exists", {
     target_email: email,
   });
 
   if (error) {
-    console.error('RPC error:', error);
+    console.error("RPC error:", error);
     return false;
   }
 
@@ -59,9 +59,9 @@ export async function checkEmailExists(email: string): Promise<boolean> {
  * Possible user verification statuses returned by getUserVerificationStatus.
  */
 export const USER_VERIFICATION_STATUS = {
-  NOT_FOUND: 'not_found',
-  UNVERIFIED: 'unverified',
-  VERIFIED: 'verified',
+  NOT_FOUND: "not_found",
+  UNVERIFIED: "unverified",
+  VERIFIED: "verified",
 } as const;
 
 /**
@@ -71,12 +71,12 @@ export const USER_VERIFICATION_STATUS = {
  */
 export async function getUserVerificationStatus(email: string) {
   const supabase = createClient();
-  const { data, error } = await supabase.rpc('get_user_verification_status', {
+  const { data, error } = await supabase.rpc("get_user_verification_status", {
     target_email: email,
   });
 
   if (error) {
-    console.error('Failed to fetch user verification status:', error.message);
+    console.error("Failed to fetch user verification status:", error.message);
     return USER_VERIFICATION_STATUS.NOT_FOUND;
   }
 

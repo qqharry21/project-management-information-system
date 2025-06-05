@@ -1,8 +1,13 @@
-import { updateSession } from '@/lib/supabase/middleware';
-import { type NextRequest } from 'next/server';
+import { updateSession } from "@/lib/supabase/middleware";
+import createMiddleware from "next-intl/middleware";
+import { type NextRequest } from "next/server";
+import { routing } from "./i18n/routing";
+
+const handleI18nRouting = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  const intlResponse = handleI18nRouting(request);
+  return await updateSession(request, intlResponse);
 }
 
 export const config = {
@@ -14,6 +19,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/",
+    "/(en|zh-TW)/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

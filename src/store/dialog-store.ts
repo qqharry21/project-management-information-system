@@ -1,14 +1,14 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 /**
  * Types of actions that can be performed in dialogs
  */
 export type DialogActionType =
-  | 'newProject'
-  | 'newContract'
-  | 'createInvoice'
-  | 'addClient'
-  | 'newQuotation'
+  | "newProject"
+  | "newContract"
+  | "createInvoice"
+  | "addClient"
+  | "newQuotation"
   | null;
 
 /**

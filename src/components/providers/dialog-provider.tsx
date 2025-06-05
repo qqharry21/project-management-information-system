@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { GlobalActionDialog } from '@/components/action-dialog';
+import { GlobalActionDialog } from "@/components/action-dialog";
 
 /**
  * Dialog Provider Component

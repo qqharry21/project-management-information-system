@@ -1,10 +1,6 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+import { SupabaseClient } from '@supabase/supabase-js';
+
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   public: {
@@ -66,19 +62,19 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "closure_reports_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'closure_reports_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "closure_reports_submitted_by_fkey";
-            columns: ["submitted_by"];
+            foreignKeyName: 'closure_reports_submitted_by_fkey';
+            columns: ['submitted_by'];
             isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
         ];
       };
       contracts: {
@@ -89,7 +85,7 @@ export type Database = {
           id: string;
           project_id: string | null;
           signed_at: string | null;
-          status: Database["public"]["Enums"]["contract_status"];
+          status: Database['public']['Enums']['contract_status'];
           title: string | null;
         };
         Insert: {
@@ -99,7 +95,7 @@ export type Database = {
           id?: string;
           project_id?: string | null;
           signed_at?: string | null;
-          status?: Database["public"]["Enums"]["contract_status"];
+          status?: Database['public']['Enums']['contract_status'];
           title?: string | null;
         };
         Update: {
@@ -109,24 +105,24 @@ export type Database = {
           id?: string;
           project_id?: string | null;
           signed_at?: string | null;
-          status?: Database["public"]["Enums"]["contract_status"];
+          status?: Database['public']['Enums']['contract_status'];
           title?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "contracts_client_id_fkey";
-            columns: ["client_id"];
+            foreignKeyName: 'contracts_client_id_fkey';
+            columns: ['client_id'];
             isOneToOne: false;
-            referencedRelation: "clients";
-            referencedColumns: ["id"];
+            referencedRelation: 'clients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "contracts_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'contracts_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       expenses: {
@@ -156,12 +152,12 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "expenses_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'expenses_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       income: {
@@ -191,12 +187,12 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "income_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'income_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       invoices: {
@@ -208,7 +204,7 @@ export type Database = {
           invoice_number: string | null;
           issued_at: string | null;
           project_id: string | null;
-          status: Database["public"]["Enums"]["invoice_status"];
+          status: Database['public']['Enums']['invoice_status'];
         };
         Insert: {
           amount: number;
@@ -218,7 +214,7 @@ export type Database = {
           invoice_number?: string | null;
           issued_at?: string | null;
           project_id?: string | null;
-          status?: Database["public"]["Enums"]["invoice_status"];
+          status?: Database['public']['Enums']['invoice_status'];
         };
         Update: {
           amount?: number;
@@ -228,16 +224,16 @@ export type Database = {
           invoice_number?: string | null;
           issued_at?: string | null;
           project_id?: string | null;
-          status?: Database["public"]["Enums"]["invoice_status"];
+          status?: Database['public']['Enums']['invoice_status'];
         };
         Relationships: [
           {
-            foreignKeyName: "invoices_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'invoices_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       project_files: {
@@ -267,19 +263,19 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "project_files_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'project_files_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "project_files_uploaded_by_fkey";
-            columns: ["uploaded_by"];
+            foreignKeyName: 'project_files_uploaded_by_fkey';
+            columns: ['uploaded_by'];
             isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
         ];
       };
       project_team_members: {
@@ -287,38 +283,38 @@ export type Database = {
           id: string;
           joined_at: string | null;
           project_id: string | null;
-          role: Database["public"]["Enums"]["role_type"];
+          role: Database['public']['Enums']['role_type'];
           user_id: string | null;
         };
         Insert: {
           id?: string;
           joined_at?: string | null;
           project_id?: string | null;
-          role?: Database["public"]["Enums"]["role_type"];
+          role?: Database['public']['Enums']['role_type'];
           user_id?: string | null;
         };
         Update: {
           id?: string;
           joined_at?: string | null;
           project_id?: string | null;
-          role?: Database["public"]["Enums"]["role_type"];
+          role?: Database['public']['Enums']['role_type'];
           user_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "project_team_members_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'project_team_members_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "project_team_members_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'project_team_members_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
         ];
       };
       project_timeline_events: {
@@ -330,7 +326,7 @@ export type Database = {
           project_id: string | null;
           start_date: string | null;
           title: string;
-          type: Database["public"]["Enums"]["timeline_event_type"];
+          type: Database['public']['Enums']['timeline_event_type'];
         };
         Insert: {
           created_at?: string | null;
@@ -340,7 +336,7 @@ export type Database = {
           project_id?: string | null;
           start_date?: string | null;
           title: string;
-          type?: Database["public"]["Enums"]["timeline_event_type"];
+          type?: Database['public']['Enums']['timeline_event_type'];
         };
         Update: {
           created_at?: string | null;
@@ -350,16 +346,16 @@ export type Database = {
           project_id?: string | null;
           start_date?: string | null;
           title?: string;
-          type?: Database["public"]["Enums"]["timeline_event_type"];
+          type?: Database['public']['Enums']['timeline_event_type'];
         };
         Relationships: [
           {
-            foreignKeyName: "project_timeline_events_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'project_timeline_events_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       projects: {
@@ -371,7 +367,7 @@ export type Database = {
           id: string;
           name: string;
           start_date: string | null;
-          status: Database["public"]["Enums"]["project_status"];
+          status: Database['public']['Enums']['project_status'];
         };
         Insert: {
           client_id: string;
@@ -381,7 +377,7 @@ export type Database = {
           id?: string;
           name: string;
           start_date?: string | null;
-          status?: Database["public"]["Enums"]["project_status"];
+          status?: Database['public']['Enums']['project_status'];
         };
         Update: {
           client_id?: string;
@@ -391,16 +387,16 @@ export type Database = {
           id?: string;
           name?: string;
           start_date?: string | null;
-          status?: Database["public"]["Enums"]["project_status"];
+          status?: Database['public']['Enums']['project_status'];
         };
         Relationships: [
           {
-            foreignKeyName: "projects_client_id_fkey";
-            columns: ["client_id"];
+            foreignKeyName: 'projects_client_id_fkey';
+            columns: ['client_id'];
             isOneToOne: false;
-            referencedRelation: "clients";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'clients';
+            referencedColumns: ['id'];
+          }
         ];
       };
       quotations: {
@@ -411,7 +407,7 @@ export type Database = {
           issued_at: string | null;
           project_id: string | null;
           quotation_number: string | null;
-          status: Database["public"]["Enums"]["quotation_status"];
+          status: Database['public']['Enums']['quotation_status'];
         };
         Insert: {
           amount: number;
@@ -420,7 +416,7 @@ export type Database = {
           issued_at?: string | null;
           project_id?: string | null;
           quotation_number?: string | null;
-          status?: Database["public"]["Enums"]["quotation_status"];
+          status?: Database['public']['Enums']['quotation_status'];
         };
         Update: {
           amount?: number;
@@ -429,16 +425,16 @@ export type Database = {
           issued_at?: string | null;
           project_id?: string | null;
           quotation_number?: string | null;
-          status?: Database["public"]["Enums"]["quotation_status"];
+          status?: Database['public']['Enums']['quotation_status'];
         };
         Relationships: [
           {
-            foreignKeyName: "quotations_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'quotations_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       subscription_tracking: {
@@ -480,19 +476,19 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "subscription_tracking_client_id_fkey";
-            columns: ["client_id"];
+            foreignKeyName: 'subscription_tracking_client_id_fkey';
+            columns: ['client_id'];
             isOneToOne: false;
-            referencedRelation: "clients";
-            referencedColumns: ["id"];
+            referencedRelation: 'clients';
+            referencedColumns: ['id'];
           },
           {
-            foreignKeyName: "subscription_tracking_project_id_fkey";
-            columns: ["project_id"];
+            foreignKeyName: 'subscription_tracking_project_id_fkey';
+            columns: ['project_id'];
             isOneToOne: false;
-            referencedRelation: "projects";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          }
         ];
       };
       user_profiles: {
@@ -519,12 +515,12 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "user_profiles_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: 'user_profiles_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: true;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          }
         ];
       };
       users: {
@@ -533,21 +529,21 @@ export type Database = {
           email: string | null;
           full_name: string | null;
           id: string;
-          role: Database["public"]["Enums"]["role_type"];
+          role: Database['public']['Enums']['role_type'];
         };
         Insert: {
           created_at?: string | null;
           email?: string | null;
           full_name?: string | null;
           id: string;
-          role?: Database["public"]["Enums"]["role_type"];
+          role?: Database['public']['Enums']['role_type'];
         };
         Update: {
           created_at?: string | null;
           email?: string | null;
           full_name?: string | null;
           id?: string;
-          role?: Database["public"]["Enums"]["role_type"];
+          role?: Database['public']['Enums']['role_type'];
         };
         Relationships: [];
       };
@@ -566,12 +562,12 @@ export type Database = {
       };
     };
     Enums: {
-      contract_status: "draft" | "signed" | "active" | "expired" | "cancelled";
-      invoice_status: "draft" | "sent" | "paid" | "overdue" | "cancelled";
-      project_status: "active" | "completed" | "on_hold" | "cancelled";
-      quotation_status: "draft" | "sent" | "accepted" | "rejected";
-      role_type: "admin" | "project_manager" | "team_member";
-      timeline_event_type: "milestone" | "task" | "meeting";
+      contract_status: 'draft' | 'signed' | 'active' | 'expired' | 'cancelled';
+      invoice_status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+      project_status: 'active' | 'completed' | 'on_hold' | 'cancelled';
+      quotation_status: 'draft' | 'sent' | 'accepted' | 'rejected';
+      role_type: 'admin' | 'project_manager' | 'team_member';
+      timeline_event_type: 'milestone' | 'task' | 'meeting';
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -579,124 +575,122 @@ export type Database = {
   };
 };
 
-type DefaultSchema = Database[Extract<keyof Database, "public">];
+type DefaultSchema = Database[Extract<keyof Database, 'public'>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
     | { schema: keyof Database },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    ? keyof (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    : never = never
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+  ? (Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      Database[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R;
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
-      }
-      ? R
-      : never
-    : never;
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+  ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : never;
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
+    | keyof DefaultSchema['Tables']
     | { schema: keyof Database },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Insert: infer I;
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
-      }
-      ? I
-      : never
-    : never;
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : never;
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
+    | keyof DefaultSchema['Tables']
     | { schema: keyof Database },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    ? keyof Database[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+  ? Database[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
       Update: infer U;
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
-      }
-      ? U
-      : never
-    : never;
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : never;
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof Database },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    ? keyof Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    : never = never
 > = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never;
+  ? Database[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+  ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
+    | keyof DefaultSchema['CompositeTypes']
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database;
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never;
+  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+  ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  : never;
 
 export const Constants = {
   public: {
     Enums: {
-      contract_status: ["draft", "signed", "active", "expired", "cancelled"],
-      invoice_status: ["draft", "sent", "paid", "overdue", "cancelled"],
-      project_status: ["active", "completed", "on_hold", "cancelled"],
-      quotation_status: ["draft", "sent", "accepted", "rejected"],
-      role_type: ["admin", "project_manager", "team_member"],
-      timeline_event_type: ["milestone", "task", "meeting"],
+      contract_status: ['draft', 'signed', 'active', 'expired', 'cancelled'],
+      invoice_status: ['draft', 'sent', 'paid', 'overdue', 'cancelled'],
+      project_status: ['active', 'completed', 'on_hold', 'cancelled'],
+      quotation_status: ['draft', 'sent', 'accepted', 'rejected'],
+      role_type: ['admin', 'project_manager', 'team_member'],
+      timeline_event_type: ['milestone', 'task', 'meeting'],
     },
   },
 } as const;
 
-export type UserWithProfile = Tables<"users"> & {
-  user_profiles: Tables<"user_profiles">;
+export type UserWithProfile = Tables<'users'> & {
+  user_profiles: Tables<'user_profiles'>;
 };
+
+export type TypedSupabaseClient = SupabaseClient<Database>;

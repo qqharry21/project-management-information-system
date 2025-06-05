@@ -1,20 +1,21 @@
-import type { Metadata } from "next";
-import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
-import { Geist, Geist_Mono } from "next/font/google";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
+import { Geist, Geist_Mono } from 'next/font/google';
+import { notFound } from 'next/navigation';
 
-import { Toaster } from "@/components/ui/sonner";
-import { routing } from "@/i18n/routing";
-import { getURL } from "@/lib/utils";
-import "../globals.css";
+import { QueryProvider } from '@/components/providers/query-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { routing } from '@/i18n/routing';
+import { getURL } from '@/lib/utils';
+import '../globals.css';
 
 const meta = {
-  title: "HaoMo Dashboard",
-  description: "Project management system for HaoMo",
-  cardImage: "/og.webp",
-  robots: "follow, index",
-  favicon: "/icon.ico",
+  title: 'HaoMo Dashboard',
+  description: 'Project management system for HaoMo',
+  cardImage: '/og.webp',
+  robots: 'follow, index',
+  favicon: '/icon.ico',
   url: getURL(),
 };
 
@@ -25,11 +26,11 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${meta.title}`,
     },
     description: meta.description,
-    referrer: "origin-when-cross-origin",
-    keywords: ["Vercel", "Supabase", "Next.js", "Dashboard", "HaoMo"],
-    authors: [{ name: "HaoMo", url: "https://vercel.com/" }],
-    creator: "HaoMo",
-    publisher: "HaoMo",
+    referrer: 'origin-when-cross-origin',
+    keywords: ['Vercel', 'Supabase', 'Next.js', 'Dashboard', 'HaoMo'],
+    authors: [{ name: 'HaoMo', url: 'https://vercel.com/' }],
+    creator: 'HaoMo',
+    publisher: 'HaoMo',
     robots: meta.robots,
     icons: { icon: meta.favicon },
     metadataBase: new URL(meta.url),
@@ -38,13 +39,13 @@ export async function generateMetadata(): Promise<Metadata> {
       title: meta.title,
       description: meta.description,
       images: [meta.cardImage],
-      type: "website",
+      type: 'website',
       siteName: meta.title,
     },
     twitter: {
-      card: "summary_large_image",
-      site: "@HarryChen824",
-      creator: "@HarryChen824",
+      card: 'summary_large_image',
+      site: '@HarryChen824',
+      creator: '@HarryChen824',
       title: meta.title,
       description: meta.description,
       images: [meta.cardImage],
@@ -53,13 +54,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export default async function LocaleLayout({
@@ -75,13 +76,13 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale);
   return (
-    <html lang={locale}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Toaster richColors />
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
-      </body>
-    </html>
+    <QueryProvider>
+      <html lang={locale}>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <Toaster richColors />
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </body>
+      </html>
+    </QueryProvider>
   );
 }

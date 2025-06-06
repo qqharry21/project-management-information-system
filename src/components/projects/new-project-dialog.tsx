@@ -21,6 +21,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useDialogStore } from '@/store/dialog-store';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useInsertMutation } from '@supabase-cache-helpers/postgrest-react-query';
 import { IconLoader2 } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
@@ -45,6 +46,7 @@ type FormValues = z.infer<typeof schema>;
 
 export function NewProjectDialog() {
   const t = useTranslations();
+  const supabase = createClient();
   const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const closeDialog = useDialogStore((s) => s.closeDialog);
@@ -71,27 +73,28 @@ export function NewProjectDialog() {
     },
   });
 
-  // 禁用 modal 關閉
+  const { mutateAsync: insert } = useInsertMutation(
+    supabase.from('projects'),
+    ['id'],
+    '*, clients(name)',
+    {
+      onSuccess: () => {
+        toast.success(t('Common.add') + ' ' + t('Message.success'));
+        closeDialog();
+        setIsLoading(false);
+      },
+      onError: (error) => {
+        toast.error(
+          t('Common.add') + ' ' + t('Message.failed') + ': ' + (error.message || t('Message.error'))
+        );
+        setIsLoading(false);
+      },
+    }
+  );
 
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.from('projects').insert([values]);
-      if (error) {
-        toast.error(t('Message.error') + ': ' + (error.message || t('Message.error')));
-        return;
-      }
-      // revalidatePath (server action)
-      // revalidateTag('projects');
-      toast.success(t('Message.success'));
-      closeDialog();
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : t('Message.error');
-      toast.error(t('Message.error') + ': ' + msg);
-    } finally {
-      setIsLoading(false);
-    }
+    await insert([values]);
   }
 
   return (

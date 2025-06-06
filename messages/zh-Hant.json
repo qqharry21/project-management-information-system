@@ -26,7 +26,15 @@
     "confirm": "確定",
     "submit": "提交",
     "no_data": "沒有資料",
-    "empty": "尚無資料"
+    "empty": "尚無資料",
+    "add_project": "新增專案",
+    "pagination": {
+      "showing": "顯示 {startIndex} - {endIndex} 共 {total} 筆",
+      "previous": "上一頁",
+      "next": "下一頁"
+    },
+    "loading": "加載中",
+    "add": "新增"
   },
   "Status": {
     "active": "正在進行中",
@@ -70,7 +78,8 @@
     "error": "錯誤",
     "warning": "警告",
     "info": "資訊",
-    "loading": "加載中"
+    "loading": "加載中",
+    "failed": "失敗"
   },
   "Subscription": {
     "subscription_reminder": "訂閱到期提醒",

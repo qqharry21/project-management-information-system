@@ -26,7 +26,15 @@
     "confirm": "Confirm",
     "submit": "Submit",
     "no_data": "No data",
-    "empty": "No records"
+    "empty": "No records",
+    "add_project": "Add Project",
+    "pagination": {
+      "showing": "Showing {startIndex} - {endIndex} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "loading": "Loading",
+    "add": "Add"
   },
   "Status": {
     "active": "Active",
@@ -70,7 +78,8 @@
     "error": "Error",
     "warning": "Warning",
     "info": "Info",
-    "loading": "Loading"
+    "loading": "Loading",
+    "failed": "Failed"
   },
   "Subscription": {
     "subscription_reminder": "Subscription Reminder",

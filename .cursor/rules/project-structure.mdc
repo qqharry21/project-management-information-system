@@ -15,3 +15,17 @@ This project is a Next.js app using the `/src` directory for all source code. Ke
   - import { Button } from '@/components/ui/button';
 
 Follow Next.js app directory conventions. Use Tailwind CSS and Shadcn UI for styling. Supabase is the backend for auth, data, and storage.
+
+Build a project management information system web application using Next.js (TypeScript), TailwindCSS, and shadcn/ui. The dashboard is designed for a case team and should include user authentication via Supabase as the backend service. The application must support secure login, session management, and role-based access control for authenticated users.
+
+Core Modules:
+	•	Dashboard Overview: Monthly income/expense summary, active project progress, subscription reminders, recent contracts, and invoice summary.
+	•	Project Management: Project list, timeline view (Gantt chart or calendar), upload project files, manage quotations, specifications, closure reports, team member.
+	•	Contract Management: View, create, and sign contracts. Export contracts as DOCX, Excel, or PDF. Link contracts to clients and track status.
+	•	Finance Management: Track income and expenses, generate and manage electronic invoices, issue quotations.
+	•	Client & Subscription Management: Manage client profiles and subscription plans. Monitor active subscriptions, invoices, and contract linkage.
+
+Authentication:
+	•	Use Supabase Auth to handle user registration, login, password reset, and session management.
+	•	Protect routes for authenticated users only.
+	•	Optionally support role-based permissions (e.g., admin, project manager).

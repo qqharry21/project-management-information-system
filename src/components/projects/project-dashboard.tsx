@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useDialogStore } from "@/store/dialog-store";
-import type { Tables } from "@supabase/types";
-import { IconPlus } from "@tabler/icons-react";
+import { useIsMobile } from '@/hooks/use-mobile';
+import { createClient } from '@/lib/supabase/client';
+import { getProjects } from '@/queries/get-projects';
+import { useQuery } from '@supabase-cache-helpers/postgrest-react-query';
+import type { Tables } from '@supabase/types';
 import {
   ColumnFiltersState,
   getCoreRowModel,
@@ -13,39 +13,38 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
-} from "@tanstack/react-table";
-import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-import { columns } from "./project-columns";
-import ProjectFilters from "./project-filters";
-import ProjectList from "./project-list";
-import ProjectPagination from "./project-pagination";
-import ProjectStats from "./project-stats";
+} from '@tanstack/react-table';
+import { useFormatter, useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { columns } from './project-columns';
+import ProjectFilters from './project-filters';
+import ProjectList from './project-list';
+import ProjectPagination from './project-pagination';
+import ProjectStats from './project-stats';
 
-export type ProjectWithClient = Tables<"projects"> & {
+export type ProjectWithClient = Tables<'projects'> & {
   clients?: { name: string };
 };
 
-interface ProjectDashboardProps {
-  projects: ProjectWithClient[];
-}
+export default function ProjectDashboard() {
+  const supabase = createClient();
+  const { data: projects, isLoading, isError } = useQuery(getProjects(supabase));
 
-export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
   const t = useTranslations();
+  const format = useFormatter();
   const isMobile = useIsMobile();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 5,
   });
-  const { openDialog } = useDialogStore();
 
   const table = useReactTable({
-    data: projects,
-    columns: columns(t),
+    data: projects || [],
+    columns: columns(t, format),
     state: {
       sorting,
       globalFilter: searchTerm,
@@ -59,14 +58,14 @@ export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    globalFilterFn: (row, columnId, filterValue) => {
+    globalFilterFn: (row, _, filterValue) => {
       // Search in name, description, and client name
-      const project = row.original as ProjectWithClient;
+      const project = row.original;
       const search = (filterValue as string).toLowerCase();
       return (
-        (project.name?.toLowerCase() || "").includes(search) ||
-        (project.description?.toLowerCase() || "").includes(search) ||
-        (project.clients?.name?.toLowerCase() || "").includes(search)
+        (project.name?.toLowerCase() || '').includes(search) ||
+        (project.description?.toLowerCase() || '').includes(search) ||
+        (project.clients?.name?.toLowerCase() || '').includes(search)
       );
     },
     manualPagination: false,
@@ -76,56 +75,29 @@ export default function ProjectDashboard({ projects }: ProjectDashboardProps) {
 
   useEffect(() => {
     if (isMobile) {
-      setViewMode("grid");
+      setViewMode('grid');
     }
   }, [isMobile]);
 
-  // 取得目前 status filter 狀態
-  const statusFilter = String(
-    columnFilters.find((f) => f.id === "status")?.value ?? "all",
-  );
-  const setStatusFilter = (value: string) => {
-    setColumnFilters((prev) => {
-      // 移除 status filter
-      if (value === "all") {
-        return prev.filter((f) => f.id !== "status");
-      }
-      // 設定 status filter
-      const otherFilters = prev.filter((f) => f.id !== "status");
-      return [...otherFilters, { id: "status", value }];
-    });
-  };
+  if (isLoading) return <div>Loading...</div>;
+
+  if (isError || !projects) return <div>Error</div>;
+
+  if (projects.length === 0) return <div>No projects found</div>;
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t("Dashboard.project_management")}
-          </h1>
-          <p className="text-muted-foreground">
-            {t("Dashboard.project_management_desc")}
-          </p>
-        </div>
-        <Button
-          type="button"
-          onClick={() => openDialog("newProject")}
-          className="flex items-center gap-2"
-        >
-          <IconPlus className="w-4 h-4" />
-          新增專案
-        </Button>
-      </div>
       <ProjectStats projects={projects} />
       <ProjectFilters
-        searchTerm={searchTerm}
+        table={table}
         setSearchTerm={setSearchTerm}
         viewMode={viewMode}
         setViewMode={setViewMode}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
       />
-      <ProjectList viewMode={viewMode} table={table} />
+      <ProjectList
+        viewMode={viewMode}
+        table={table}
+      />
       <ProjectPagination table={table} />
     </>
   );
